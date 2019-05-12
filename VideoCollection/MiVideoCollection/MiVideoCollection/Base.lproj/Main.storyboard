@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rjo-EZ-xnX">
+                                <rect key="frame" x="87" y="298" width="240" height="300"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="maP-rY-e9O">
+                                        <rect key="frame" x="75" y="0.0" width="90" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="RA8-DI-uff"/>
+                                            <constraint firstAttribute="width" constant="90" id="dCM-jb-ZyC"/>
+                                        </constraints>
+                                        <state key="normal" title="视频采集"/>
+                                        <connections>
+                                            <segue destination="7DF-x2-Cey" kind="presentation" id="VrL-Bt-NVO"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="maP-rY-e9O" firstAttribute="top" secondItem="Rjo-EZ-xnX" secondAttribute="top" id="Qmd-1v-MRd"/>
+                                    <constraint firstAttribute="width" constant="240" id="bZf-9V-o5e"/>
+                                    <constraint firstAttribute="height" constant="300" id="s0c-OS-ytx"/>
+                                    <constraint firstItem="maP-rY-e9O" firstAttribute="centerX" secondItem="Rjo-EZ-xnX" secondAttribute="centerX" id="vfc-9c-ohq"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Rjo-EZ-xnX" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="46V-gO-CXT"/>
+                            <constraint firstItem="Rjo-EZ-xnX" firstAttribute="centerX" secondItem="zNB-uo-bX6" secondAttribute="centerX" id="oRF-n3-vWj"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="zNB-uo-bX6"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-203.00000000000003" y="25"/>
+        </scene>
+        <!--Mi Video CollectVC-->
+        <scene sceneID="I2d-fR-cHF">
+            <objects>
+                <viewController id="7DF-x2-Cey" customClass="MiVideoCollectVC" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="u22-Zn-rg9">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dA7-bO-LdZ">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T4b-uf-CZN">
+                                        <rect key="frame" x="0.0" y="0.0" width="66" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="66" id="J4M-kx-ZHC"/>
+                                            <constraint firstAttribute="height" constant="35" id="jBY-RF-6eH"/>
+                                        </constraints>
+                                        <state key="normal" title="cancel"/>
+                                        <connections>
+                                            <action selector="onpressedBtnDismiss:" destination="7DF-x2-Cey" eventType="touchUpInside" id="2F4-me-9kt"/>
+                                        </connections>
+                                    </button>
+                                    <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F16-kI-OfV">
+                                        <rect key="frame" x="0.0" y="638" width="414" height="180"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rLh-YC-KfC">
+                                                <rect key="frame" x="0.0" y="150" width="414" height="30"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="rjV-FA-9p6"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lnO-Us-gMv">
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MoU-rJ-VZP">
+                                                        <rect key="frame" x="20" y="0.0" width="60" height="60"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="60" id="elC-oN-ycs"/>
+                                                            <constraint firstAttribute="height" constant="60" id="gjQ-0K-Wzg"/>
+                                                        </constraints>
+                                                        <state key="normal" title="720p">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onPressedBtnChangeResolutionTo720p:" destination="7DF-x2-Cey" eventType="touchUpInside" id="UW1-c1-HJK"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fFe-9E-DVJ">
+                                                        <rect key="frame" x="100" y="0.0" width="60" height="60"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="60" id="4RF-dx-hM0"/>
+                                                            <constraint firstAttribute="height" constant="60" id="gX8-Ut-eB7"/>
+                                                        </constraints>
+                                                        <state key="normal" title="1080p">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onPressedBtnChangeResolutionTo1080p:" destination="7DF-x2-Cey" eventType="touchUpInside" id="T04-gb-iah"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v6y-4a-h2B">
+                                                        <rect key="frame" x="180" y="0.0" width="60" height="60"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="1ec-HS-XGM"/>
+                                                            <constraint firstAttribute="width" constant="60" id="BM5-K5-5dG"/>
+                                                        </constraints>
+                                                        <state key="normal" title="15FPS">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onpressedBtnChangeFpsTo15:" destination="7DF-x2-Cey" eventType="touchUpInside" id="0kU-iY-2Nz"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yvh-zc-WzN">
+                                                        <rect key="frame" x="260" y="0.0" width="60" height="60"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="60" id="Y9z-rr-pMG"/>
+                                                            <constraint firstAttribute="width" constant="60" id="bkR-at-pkE"/>
+                                                        </constraints>
+                                                        <state key="normal" title="30FPS">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onpressedBtnChangeFpsTo30:" destination="7DF-x2-Cey" eventType="touchUpInside" id="w4w-nm-O0z"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" red="0.68150882489999998" green="0.71023225759999997" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstItem="v6y-4a-h2B" firstAttribute="centerY" secondItem="lnO-Us-gMv" secondAttribute="centerY" id="4MR-RV-YEE"/>
+                                                    <constraint firstItem="Yvh-zc-WzN" firstAttribute="centerY" secondItem="lnO-Us-gMv" secondAttribute="centerY" id="DtF-aM-Y7x"/>
+                                                    <constraint firstItem="MoU-rJ-VZP" firstAttribute="centerY" secondItem="lnO-Us-gMv" secondAttribute="centerY" id="PpT-mg-njy"/>
+                                                    <constraint firstItem="Yvh-zc-WzN" firstAttribute="leading" secondItem="v6y-4a-h2B" secondAttribute="trailing" constant="20" id="bA3-dm-oNq"/>
+                                                    <constraint firstItem="fFe-9E-DVJ" firstAttribute="leading" secondItem="MoU-rJ-VZP" secondAttribute="trailing" constant="20" id="hls-Br-oW5"/>
+                                                    <constraint firstAttribute="height" constant="60" id="nZh-83-h7n"/>
+                                                    <constraint firstItem="MoU-rJ-VZP" firstAttribute="leading" secondItem="lnO-Us-gMv" secondAttribute="leading" constant="20" id="pIv-Rt-qOX"/>
+                                                    <constraint firstItem="v6y-4a-h2B" firstAttribute="leading" secondItem="fFe-9E-DVJ" secondAttribute="trailing" constant="20" id="q3l-WE-9Sk"/>
+                                                    <constraint firstItem="fFe-9E-DVJ" firstAttribute="centerY" secondItem="lnO-Us-gMv" secondAttribute="centerY" id="uOK-1H-4DJ"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Ok-DH-va2">
+                                                <rect key="frame" x="0.0" y="65" width="414" height="60"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VZV-Pe-ewR">
+                                                        <rect key="frame" x="20" y="0.0" width="60" height="60"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="60" id="5WB-XV-ngK"/>
+                                                            <constraint firstAttribute="height" constant="60" id="tBR-Tj-pRd"/>
+                                                        </constraints>
+                                                        <state key="normal" title="flash">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onpressedBtnSwitchFlash:" destination="7DF-x2-Cey" eventType="touchUpInside" id="Z9i-m5-KuC"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b2T-vm-b6g">
+                                                        <rect key="frame" x="99" y="0.0" width="60" height="60"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <state key="normal" title="switch">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onpressedBtnSwitchCamera:" destination="7DF-x2-Cey" eventType="touchUpInside" id="oMK-7I-lKA"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tld-vb-dSW">
+                                                        <rect key="frame" x="177" y="0.0" width="60" height="60"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <state key="normal" title="photo">
+                                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        </state>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                <integer key="value" value="30"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="onpressedBtnPhoto:" destination="7DF-x2-Cey" eventType="touchUpInside" id="fYm-dJ-bZi"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" red="0.68150882489999998" green="0.71023225759999997" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstItem="VZV-Pe-ewR" firstAttribute="centerY" secondItem="4Ok-DH-va2" secondAttribute="centerY" id="acz-QT-S0C"/>
+                                                    <constraint firstItem="VZV-Pe-ewR" firstAttribute="leading" secondItem="4Ok-DH-va2" secondAttribute="leading" constant="20" id="m1E-ks-uHn"/>
+                                                    <constraint firstAttribute="height" constant="60" id="xNf-bV-LBA"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="4Ok-DH-va2" firstAttribute="leading" secondItem="F16-kI-OfV" secondAttribute="leading" id="59H-Z7-pOl"/>
+                                            <constraint firstAttribute="trailing" secondItem="4Ok-DH-va2" secondAttribute="trailing" id="S1m-am-ajZ"/>
+                                            <constraint firstAttribute="bottom" secondItem="rLh-YC-KfC" secondAttribute="bottom" id="dri-Pz-0rt"/>
+                                            <constraint firstItem="lnO-Us-gMv" firstAttribute="top" secondItem="F16-kI-OfV" secondAttribute="top" id="eLI-TU-vyS"/>
+                                            <constraint firstAttribute="trailing" secondItem="lnO-Us-gMv" secondAttribute="trailing" id="iqp-D1-XSw"/>
+                                            <constraint firstAttribute="height" constant="180" id="nTf-80-EKS"/>
+                                            <constraint firstItem="rLh-YC-KfC" firstAttribute="leading" secondItem="F16-kI-OfV" secondAttribute="leading" id="qIk-V6-vDj"/>
+                                            <constraint firstAttribute="trailing" secondItem="rLh-YC-KfC" secondAttribute="trailing" id="rvo-RS-ZV4"/>
+                                            <constraint firstItem="lnO-Us-gMv" firstAttribute="leading" secondItem="F16-kI-OfV" secondAttribute="leading" id="t4Z-IA-gwC"/>
+                                            <constraint firstItem="4Ok-DH-va2" firstAttribute="top" secondItem="lnO-Us-gMv" secondAttribute="bottom" constant="5" id="tJD-eP-7Zb"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="F16-kI-OfV" firstAttribute="leading" secondItem="dA7-bO-LdZ" secondAttribute="leading" id="7zq-6u-wam"/>
+                                    <constraint firstItem="T4b-uf-CZN" firstAttribute="leading" secondItem="dA7-bO-LdZ" secondAttribute="leading" id="9Wu-D9-lgw"/>
+                                    <constraint firstAttribute="trailing" secondItem="F16-kI-OfV" secondAttribute="trailing" id="Mb6-sz-4gj"/>
+                                    <constraint firstItem="T4b-uf-CZN" firstAttribute="top" secondItem="dA7-bO-LdZ" secondAttribute="top" id="T20-bl-CEF"/>
+                                    <constraint firstAttribute="bottom" secondItem="F16-kI-OfV" secondAttribute="bottom" id="ewf-xJ-Oya"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="CK7-Qc-apd" firstAttribute="trailing" secondItem="dA7-bO-LdZ" secondAttribute="trailing" id="9MX-OO-2qV"/>
+                            <constraint firstItem="dA7-bO-LdZ" firstAttribute="leading" secondItem="CK7-Qc-apd" secondAttribute="leading" id="Cbo-pt-odP"/>
+                            <constraint firstItem="dA7-bO-LdZ" firstAttribute="top" secondItem="CK7-Qc-apd" secondAttribute="top" id="jOA-dc-sdJ"/>
+                            <constraint firstItem="dA7-bO-LdZ" firstAttribute="bottom" secondItem="CK7-Qc-apd" secondAttribute="bottom" id="nAC-eY-c9o"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="CK7-Qc-apd"/>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="flashBtn" destination="VZV-Pe-ewR" id="4nF-bq-1LS"/>
+                        <outlet property="m_displayView" destination="dA7-bO-LdZ" id="RiI-Js-O6a"/>
+                        <outlet property="switchBtn" destination="b2T-vm-b6g" id="wLA-xu-4KS"/>
+                        <outlet property="videoConfigLabel" destination="rLh-YC-KfC" id="qXH-BF-gNd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hzD-8I-09h" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="556.52173913043487" y="-62.276785714285708"/>
+        </scene>
+    </scenes>
+</document>
