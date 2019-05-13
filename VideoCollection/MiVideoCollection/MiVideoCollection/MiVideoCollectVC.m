@@ -36,6 +36,8 @@ typedef enum{
 @property (weak, nonatomic) IBOutlet UIButton *flashBtn;
 @property (weak, nonatomic) IBOutlet UIButton *switchBtn;
 
+@property (weak, nonatomic) IBOutlet UISlider *exposureSlider;
+@property (weak, nonatomic) IBOutlet UISlider *whiteBlanceSlider;
 
 @end
 
@@ -51,6 +53,19 @@ typedef enum{
     
     _m_torchMode = AVCaptureTorchModeAuto;
     _isTakedPhoto = NO;
+    
+    // 添加单次点击手势监控：用于对焦
+    UITapGestureRecognizer *singleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mifocus:)];
+    singleRecognizer.numberOfTapsRequired = 1;
+    [self.m_displayView addGestureRecognizer:singleRecognizer];
+    
+    // 曝光调节
+    [self.exposureSlider addTarget:self action:@selector(changeExposure:) forControlEvents:UIControlEventValueChanged];
+    
+    // 黑白平衡调节
+    [self.whiteBlanceSlider addTarget:self action:@selector(whiteBlanceChange:) forControlEvents:UIControlEventValueChanged];
+    
+                                                
     
      _videoParamTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(showVideoParams) userInfo:nil repeats:YES];
 }
@@ -426,55 +441,6 @@ typedef enum{
     return (image);
 }
 
-- (UIImage *)imageFromSampleBuffer:(CMSampleBufferRef)sampleBuffer
-{
-    // NSLog(@"imageFromSampleBuffer: called");
-    // Get a CMSampleBuffer's Core Video image buffer for the media data
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    // Lock the base address of the pixel buffer
-    CVPixelBufferLockBaseAddress(imageBuffer, 0);
-    
-    // Get the number of bytes per row for the pixel buffer
-    uint8_t   *baseAddress       = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
-    // Get the number of bytes per row for the pixel buffer
-    size_t    bytesPerRow        = CVPixelBufferGetBytesPerRow(imageBuffer);
-    // Get the pixel buffer width and height
-    size_t    width              = CVPixelBufferGetWidth(imageBuffer);
-    size_t    height             = CVPixelBufferGetHeight(imageBuffer);
-//
-    // Create a device-dependent RGB color space
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    CGContextRef context = NULL;
-    // if width > height : landscape mode, otherwise : portrait mode.
-    context = CGBitmapContextCreate(baseAddress, width, height, 8,
-                                        bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    
-    if (context == NULL) {
-        CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-        CGColorSpaceRelease(colorSpace);
-        NSLog(@"MediaIOS, imageFromSampleBuffer, context is null...");
-        return NULL;
-    }
-    
-    // Create a Quartz image from the pixel data in the bitmap graphics context
-    CGImageRef quartzImage = CGBitmapContextCreateImage(context);
-    // Unlock the pixel buffer
-    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-    
-    // Free up the context and color space
-    CGContextRelease(context);
-    CGColorSpaceRelease(colorSpace);
-    
-    // Create an image object from the Quartz image
-    UIImage *image = [UIImage imageWithCGImage:quartzImage];
-    
-    // Release the Quartz image
-    CGImageRelease(quartzImage);
-    
-    return image;
-}
-
 + (void)saveImageToSysphotos:(UIImage *)image
 {
     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
@@ -487,9 +453,87 @@ typedef enum{
     }];
 }
 
+// 设置为自动对焦
+- (void)mifocus:(UITapGestureRecognizer *)sender
+{
+    CGPoint point = [sender locationInView:self.m_displayView];
+    [self miAutoFocusWithPoint:point];
+    NSLog(@"MediaIos, auto focus complete...");
+}
+
+- (void)miAutoFocusWithPoint:(CGPoint)touchPoint{
+    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    if ([captureDevice isFocusPointOfInterestSupported] && [captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+        NSError *error;
+        if ([captureDevice lockForConfiguration:&error]) {
+            // 设置曝光点
+            [captureDevice setExposurePointOfInterest:touchPoint];
+            [captureDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+            
+            // 设置对焦点
+            [captureDevice setFocusPointOfInterest:touchPoint];
+            [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
+            [captureDevice unlockForConfiguration];
+        }
+    }
+}
+
+// 曝光调节
+- (void)changeExposure:(id)sender
+{
+    UISlider *slider = (UISlider *)sender;
+    [self michangeExposure:slider.value];
+    
+}
+
+- (void)michangeExposure:(CGFloat)value{
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    NSError *error;
+    if ([device lockForConfiguration:&error]) {
+        [device setExposureTargetBias:value completionHandler:nil];
+        [device unlockForConfiguration];
+    }
+}
 
 
+- (AVCaptureWhiteBalanceGains)recalcGains:(AVCaptureWhiteBalanceGains)gains
+                                 minValue:(CGFloat)minValue
+                                 maxValue:(CGFloat)maxValue
+{
+    AVCaptureWhiteBalanceGains tmpGains = gains;
+    tmpGains.blueGain   = MAX(MIN(tmpGains.blueGain , maxValue), minValue);
+    tmpGains.redGain    = MAX(MIN(tmpGains.redGain  , maxValue), minValue);
+    tmpGains.greenGain  = MAX(MIN(tmpGains.greenGain, maxValue), minValue);
+    return tmpGains;
+}
 
+
+-(void)setWhiteBlanceUseTemperature:(CGFloat)temperature{
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked]) {
+        [device lockForConfiguration:nil];
+        AVCaptureWhiteBalanceGains currentGains = device.deviceWhiteBalanceGains;
+        CGFloat currentTint = [device temperatureAndTintValuesForDeviceWhiteBalanceGains:currentGains].tint;
+        AVCaptureWhiteBalanceTemperatureAndTintValues tempAndTintValues = {
+            .temperature = temperature,
+            .tint        = currentTint,
+        };
+        
+        AVCaptureWhiteBalanceGains gains = [device deviceWhiteBalanceGainsForTemperatureAndTintValues:tempAndTintValues];
+        CGFloat maxWhiteBalanceGain = device.maxWhiteBalanceGain;
+        gains = [self recalcGains:gains minValue:1 maxValue:maxWhiteBalanceGain];
+        
+        [device setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains:gains completionHandler:nil];
+        [device unlockForConfiguration];
+    }
+}
+
+// 黑白平衡调节
+- (void)whiteBlanceChange:(id)sender
+{
+    UISlider *slider = (UISlider *)sender;
+    [self setWhiteBlanceUseTemperature:slider.value];
+}
 
 
 @end
