@@ -378,6 +378,9 @@ typedef enum{
     [_m_session commitConfiguration];
 }
 
+/*
+ 此处切换镜头后，我把分辨率默认设置为了720p,因为对于有的设备可能前置摄像头不支持1080p，所以我在此设定一个固定的720p，如果在真实的项目中，这个值应该是你以前设定的那个值，如果前置摄像头不支持对应的又不支持的策略。
+ */
 - (void)rePreviewWithCameraType:(MiCameraType)cameraType device:(AVCaptureDevice *)device {
     NSError *error = nil;
     AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:device
@@ -385,7 +388,6 @@ typedef enum{
     if (!input) return;
     
     [_m_session removeInput:_video_input];
-    // set current m_session can accept high preset otherwise if back is 4k switch to 2k addInput add is 4k will error
     _m_session.sessionPreset = AVCaptureSessionPresetLow;
     if ([_m_session canAddInput:input])  {
         [_m_session addInput:input];
@@ -506,7 +508,6 @@ typedef enum{
     tmpGains.greenGain  = MAX(MIN(tmpGains.greenGain, maxValue), minValue);
     return tmpGains;
 }
-
 
 -(void)setWhiteBlanceUseTemperature:(CGFloat)temperature{
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
