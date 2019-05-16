@@ -7,9 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface ViewController : UIViewController
+{
+    @public
+    AudioUnit        miIoUnitInstance;
+    AudioBufferList  *audioBufferList;
+}
 
-
+- (void)stop;
 @end
 
