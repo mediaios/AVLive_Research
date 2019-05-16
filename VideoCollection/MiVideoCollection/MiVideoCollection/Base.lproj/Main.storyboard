@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -22,20 +22,35 @@
                                 <rect key="frame" x="87" y="298" width="240" height="300"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="maP-rY-e9O">
-                                        <rect key="frame" x="75" y="0.0" width="90" height="30"/>
+                                        <rect key="frame" x="25" y="0.0" width="190" height="30"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="RA8-DI-uff"/>
-                                            <constraint firstAttribute="width" constant="90" id="dCM-jb-ZyC"/>
+                                            <constraint firstAttribute="width" constant="190" id="dCM-jb-ZyC"/>
                                         </constraints>
                                         <state key="normal" title="视频采集"/>
                                         <connections>
                                             <segue destination="7DF-x2-Cey" kind="presentation" id="VrL-Bt-NVO"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xdg-yS-Sp2">
+                                        <rect key="frame" x="25" y="60" width="190" height="30"/>
+                                        <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="RIx-EQ-tuj"/>
+                                            <constraint firstAttribute="width" constant="190" id="x25-6c-6T6"/>
+                                        </constraints>
+                                        <state key="normal" title="视频采集AudioQueue"/>
+                                        <connections>
+                                            <segue destination="PlD-oT-aaK" kind="presentation" id="RGK-Mn-fk1"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstItem="Xdg-yS-Sp2" firstAttribute="top" secondItem="maP-rY-e9O" secondAttribute="bottom" constant="30" id="DM7-Ml-C7J"/>
                                     <constraint firstItem="maP-rY-e9O" firstAttribute="top" secondItem="Rjo-EZ-xnX" secondAttribute="top" id="Qmd-1v-MRd"/>
+                                    <constraint firstItem="Xdg-yS-Sp2" firstAttribute="centerX" secondItem="Rjo-EZ-xnX" secondAttribute="centerX" id="TKd-cR-ngO"/>
                                     <constraint firstAttribute="width" constant="240" id="bZf-9V-o5e"/>
                                     <constraint firstAttribute="height" constant="300" id="s0c-OS-ytx"/>
                                     <constraint firstItem="maP-rY-e9O" firstAttribute="centerX" secondItem="Rjo-EZ-xnX" secondAttribute="centerX" id="vfc-9c-ohq"/>
@@ -52,7 +67,39 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-203.00000000000003" y="25"/>
+            <point key="canvasLocation" x="-762" y="-402"/>
+        </scene>
+        <!--Audio CollectionVC-->
+        <scene sceneID="9IL-eS-pXU">
+            <objects>
+                <viewController id="PlD-oT-aaK" customClass="MIAudioCollectionVC" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ROJ-UP-cv6">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wQS-wc-9A9">
+                                <rect key="frame" x="5" y="49" width="70" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="70" id="eRZ-Zb-CHH"/>
+                                    <constraint firstAttribute="height" constant="50" id="vos-Pc-jcx"/>
+                                </constraints>
+                                <state key="normal" title="cancel"/>
+                                <connections>
+                                    <action selector="onPressedBtnDismiss:" destination="PlD-oT-aaK" eventType="touchUpInside" id="nk9-Ia-uba"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="wQS-wc-9A9" firstAttribute="top" secondItem="H7B-2o-XPz" secondAttribute="top" constant="5" id="7kH-JI-FJG"/>
+                            <constraint firstItem="wQS-wc-9A9" firstAttribute="leading" secondItem="H7B-2o-XPz" secondAttribute="leading" constant="5" id="U1K-Rf-nLx"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="H7B-2o-XPz"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qlP-oZ-Idq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-134.78260869565219" y="-600.66964285714278"/>
         </scene>
         <!--Mi Video CollectVC-->
         <scene sceneID="I2d-fR-cHF">
