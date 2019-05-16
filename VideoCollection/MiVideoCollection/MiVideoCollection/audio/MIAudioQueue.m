@@ -8,20 +8,7 @@
 
 #import "MIAudioQueue.h"
 #import <AVFoundation/AVFoundation.h>
-
-
-/** Audio recorder **/
-#define kAudioQueueRecorderSampleRate               48000
-#define kAudioQueueRecorderPCMFramesPerPacket       1
-#define kAudioQueueRecorderPCMTotalPacket           512
-#define kAudioQueueRecorderAudioBytesPerPacket       2
-
-#define kAudioRecoderPCMMaxBuffSize                 2048
-
-
-
-#define kNumberQueueBuffers 3
-
+#import "MIConst.h"
 
 
 /*!

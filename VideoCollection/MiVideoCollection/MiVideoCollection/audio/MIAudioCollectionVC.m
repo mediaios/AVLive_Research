@@ -8,9 +8,11 @@
 
 #import "MIAudioCollectionVC.h"
 #import "MIAudioQueue.h"
+#import "MIAudioUnit.h"
 
 @interface MIAudioCollectionVC ()
 @property (nonatomic,strong) MIAudioQueue *miAQ;
+@property (nonatomic,strong) MIAudioUnit *miAUnit;
 @end
 
 @implementation MIAudioCollectionVC
@@ -23,16 +25,28 @@
     return _miAQ;
 }
 
+- (MIAudioUnit *)miAUnit
+{
+    if (!_miAUnit) {
+        _miAUnit = [[MIAudioUnit alloc] init];
+    }
+    return _miAUnit;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self.miAQ startRecorder];
+//    [self.miAQ startRecorder];
+    
+    [self.miAUnit startAudioUnitRecorder];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    [self.miAQ stopRecorder];
+//    [self.miAQ stopRecorder];
+    
+    [self.miAUnit stopAudioUnitRecorder];
 }
 
 - (IBAction)onPressedBtnDismiss:(id)sender {
