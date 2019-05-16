@@ -190,7 +190,12 @@ static OSStatus RecordCallBack (void *                            inRefCon,
     OSStatus status;
     [self setUpAudioQueueWithFormatID:kAudioFormatLinearPCM];
     
-    status = AudioUnitSetProperty(m_audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitType_Output, INPUT_BUS, &dataFormat, sizeof(dataFormat));
+    status = AudioUnitSetProperty(m_audioUnit,
+                                  kAudioUnitProperty_StreamFormat,
+                                  kAudioUnitScope_Output, 
+                                  INPUT_BUS,
+                                  &dataFormat,
+                                  sizeof(dataFormat));
     if (status != noErr) {
         NSLog(@"AudioUnit,couldn't set the input client format on AURemoteIO, status : %d ",status);
     }
