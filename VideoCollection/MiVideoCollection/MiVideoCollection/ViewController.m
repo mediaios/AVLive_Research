@@ -63,6 +63,7 @@ static OSStatus audioUnitRecordCallBack (void *                            inRef
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    return;
     [self miInitAudioUnit];
     [self start];
 }

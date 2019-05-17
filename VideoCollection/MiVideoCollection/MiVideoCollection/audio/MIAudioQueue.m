@@ -16,6 +16,10 @@
 #define kAudioBytesPerPacket        2
 #define kQueueBuffers 3  // 输出音频队列缓冲个数
 
+
+#define EVERY_READ_LENGTH 1000 //每次从文件读取的长度
+#define MIN_SIZE_PER_FRAME 2000 // 每帧最小数据长度
+
 /*!
  @discussion
  AudioQueue 音频录制回调函数
@@ -50,14 +54,13 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         NSFileManager *fileManager = [NSFileManager defaultManager];
         [fileManager createDirectoryAtPath:debugUrl withIntermediateDirectories:YES attributes:nil error:nil];
         
-        NSString *audioFile = [paths stringByAppendingPathComponent:@"debug/queue_pcm_48k.pcm"] ;
+        NSString *audioFile = [paths stringByAppendingPathComponent:@"debug/queue_record_pcm_48k.pcm"] ;
         fp_pcm = fopen([audioFile UTF8String], "wb++");
     }
     createCount++;
     
-    
     MIAudioQueue *miAQ = (__bridge MIAudioQueue *)inUserData;
-    if (createCount <= 500) {
+    if (createCount <= 200) {
         void *bufferData = inBuffer->mAudioData;
         UInt32 buffersize = inBuffer->mAudioDataByteSize;
         fwrite((uint8_t *)bufferData, 1, buffersize, fp_pcm);
@@ -70,9 +73,15 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
     if (miAQ.m_isRunning) {
         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
     }
-    
 }
 
+
+static void miAudioPlayCallBack(void * __nullable       inUserData,
+                                 AudioQueueRef           inAQ,
+                                 AudioQueueBufferRef     inBuffer)
+{
+    
+}
 
 @interface MIAudioQueue()
 {
@@ -85,15 +94,11 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
 @implementation MIAudioQueue
 
 
-- (void)startRecorder
+- (void)createAudioSession
 {
-    if (self.m_isRunning) {
-        return;
-    }
-    
     /*** create audiosession ***/
     NSError *error = nil;
-    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:&error];  // if onlay record , setting AVAudioSessionCategoryRecord; if only play , setting AVAudioSessionCategoryPlayback
+    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];  // if onlay record , setting AVAudioSessionCategoryRecord; if only play , setting AVAudioSessionCategoryPlayback
     if (!ret) {
         NSLog(@"AppRecordAudio,%s,setting AVAudioSession category failed",__func__);
         return;
@@ -103,8 +108,10 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         NSLog(@"AppRecordAudio,%s,start audio session failed",__func__);
         return;
     }
-    
-    
+}
+
+- (void)settingAudioFormat
+{
     /*** setup audio sample rate , channels number, and format ID ***/
     memset(&dataFormat, 0, sizeof(dataFormat));
     UInt32 size = sizeof(dataFormat.mSampleRate);
@@ -118,23 +125,55 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
     dataFormat.mBitsPerChannel = 16;
     dataFormat.mBytesPerPacket = dataFormat.mBytesPerFrame = (dataFormat.mBitsPerChannel / 8) * dataFormat.mChannelsPerFrame;
     dataFormat.mFramesPerPacket = kAudioFramesPerPacket; // AudioQueue collection pcm data , need to set as this
+}
 
+- (void)settingCallBackFunc
+{
     /*** 设置录音回调函数 ***/
     OSStatus status = 0;
     //    int bufferByteSize = 0;
-    size = sizeof(dataFormat);
+    UInt32 size = sizeof(dataFormat);
     status = AudioQueueNewInput(&dataFormat, inputAudioQueueBufferHandler, (__bridge void *)self, NULL, NULL, 0, &mQueue);
     if (status != noErr) {
         NSLog(@"AppRecordAudio,%s,AudioQueueNewInput failed status:%d ",__func__,(int)status);
     }
+    
+//    /*** 设置播放回调函数 ***/
+//    status = AudioQueueNewOutput(&dataFormat,
+//                                 miAudioPlayCallBack,
+//                                 (__bridge void *)self,
+//                                 NULL,
+//                                 NULL,
+//                                 0,
+//                                 &mQueue);
+//    if (status != noErr) {
+//        NSLog(@"AppRecordAudio,%s, AudioQueueNewOutput failed status:%d",__func__,(int)status);
+//    }
     
     for (int i = 0 ; i < kQueueBuffers; i++) {
         status = AudioQueueAllocateBuffer(mQueue, kAudioPCMTotalPacket * kAudioBytesPerPacket * dataFormat.mChannelsPerFrame, &mBuffers[i]);
         status = AudioQueueEnqueueBuffer(mQueue, mBuffers[i], 0, NULL);
     }
     
+   
+//    for (int i = 0; i < kQueueBuffers; i++) {
+//        int result =  AudioQueueAllocateBuffer(mQueue, kAudioPCMTotalPacket * kAudioBytesPerPacket * dataFormat.mChannelsPerFrame, &mBuffers[i]);///创建buffer区，MIN_SIZE_PER_FRAME为每一侦所需要的最小的大小，该大小应该比每次往buffer里写的最大的一次还大
+//        NSLog(@"AudioQueueAllocateBuffer i = %d,result = %d",i,result);
+//    }
+}
+
+- (void)startRecorder
+{
+    [self createAudioSession];
+    [self settingAudioFormat];
+    [self settingCallBackFunc];
+    
+    if (self.m_isRunning) {
+        return;
+    }
+
     /*** start audioQueue ***/
-    status = AudioQueueStart(mQueue, NULL);
+    OSStatus status = AudioQueueStart(mQueue, NULL);
     if (status != noErr) {
         NSLog(@"AppRecordAudio,%s,AudioQueueStart failed status:%d  ",__func__,(int)status);
     }
@@ -162,6 +201,75 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         AudioQueueDispose(mQueue, true);
         mQueue = NULL;
     }
+}
+
+
+- (void)startPlay
+{
+    
+}
+
+static FILE *fid ;
+- (void)openPCMFile
+{
+    NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *audioFile = [paths stringByAppendingPathComponent:@"debug/queue_pcm_48k.pcm"] ;
+
+    fid = fopen([audioFile UTF8String], "r");
+    if (fid == NULL) {
+        NSLog(@"读取文件失败");
+    }
+}
+
+-(void)readPCMAndPlay:(AudioQueueRef)outQ buffer:(AudioQueueBufferRef)outQB
+{
+    char *buff[1024];
+    int len = 0;
+    while (len = fread(buff, sizeof(char), 1024, fid) != 0) {
+        
+    }
+    
+    
+    uint8_t *buffer = malloc(sizeof(kAudioPCMTotalPacket * kAudioBytesPerPacket * dataFormat.mChannelsPerFrame));
+    memset(buffer, 0, sizeof(buffer));
+    int readLength = 1024;//读取文件
+    NSLog(@"read raw data size = %d",readLength);
+    outQB->mAudioDataByteSize = readLength;
+    Byte *audiodata = (Byte *)outQB->mAudioData;
+    for(int i=0;i<readLength;i++)
+    {
+        audiodata[i] = buffer[i];
+    }
+    /*
+     将创建的buffer区添加到audioqueue里播放
+     AudioQueueBufferRef用来缓存待播放的数据区，AudioQueueBufferRef有两个比较重要的参数，AudioQueueBufferRef->mAudioDataByteSize用来指示数据区大小，AudioQueueBufferRef->mAudioData用来保存数据区
+     */
+    AudioQueueEnqueueBuffer(outQ, outQB, 0, NULL);
+    
+//    uint8_t *buffer = malloc(sizeof(kAudioPCMTotalPacket * kAudioBytesPerPacket * dataFormat.mChannelsPerFrame));
+//    memset(buffer, 0, sizeof(buffer));
+//    fread(buffer, sizeof(buffer), 1, fid);
+//    memcpy(outQB->mAudioData, buffer, <#size_t __n#>)
+//
+//
+//
+////    [synlock lock];
+//    size_t readLength = [inputSteam read:pcmDataBuffer maxLength:EVERY_READ_LENGTH];
+//    NSLog(@"read raw data size = %zi",readLength);
+//    if (readLength == 0) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSLog(@"文件读取完成");
+//        });
+//        return ;
+//    }
+//    outQB->mAudioDataByteSize = (UInt32)readLength;
+//    memcpy((Byte *)outQB->mAudioData, pcmDataBuffer, readLength);
+//    /*
+//     将创建的buffer区添加到audioqueue里播放
+//     AudioQueueBufferRef用来缓存待播放的数据区，AudioQueueBufferRef有两个比较重要的参数，AudioQueueBufferRef->mAudioDataByteSize用来指示数据区大小，AudioQueueBufferRef->mAudioData用来保存数据区
+//     */
+//    AudioQueueEnqueueBuffer(outQ, outQB, 0, NULL);
+////    [synlock unlock];
 }
 
 

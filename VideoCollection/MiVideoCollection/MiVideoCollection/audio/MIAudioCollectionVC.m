@@ -36,11 +36,29 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+}
+
+#pragma mark -AudioQueue的操作
+
+- (IBAction)onPressedBtnQueueRecord:(id)sender {
+    [self.miAQ startRecorder];
+}
+
+- (IBAction)onPressedBtnQueuePlay:(id)sender {
     
-//    [self.miAQ startRecorder];
-    
+}
+
+#pragma mark -AudioUnit的操作
+
+- (IBAction)onPressedBtnUnitRecord:(id)sender {
     [self.miAUnit startAudioUnitRecorder];
 }
+
+- (IBAction)onPressedBtnUnitPlay:(id)sender {
+    
+}
+
+
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
