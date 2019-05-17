@@ -9,6 +9,14 @@
 #ifndef MIConst_h
 #define MIConst_h
 
+
+/*** for audio queue ***/
+#define kAudioSampleRate            48000
+#define kAudioFramesPerPacket       1
+#define kAudioPCMTotalPacket        512
+#define kAudioBytesPerPacket        2
+#define kQueueBuffers 3  // 输出音频队列缓冲个数
+
 /** Audio recorder **/
 #define kAudioQueueRecorderSampleRate               48000
 #define kAudioQueueRecorderPCMFramesPerPacket       1

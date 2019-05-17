@@ -9,10 +9,13 @@
 #import "MIAudioCollectionVC.h"
 #import "MIAudioQueue.h"
 #import "MIAudioUnit.h"
+#import "MIAudioQueuePlay.h"
 
 @interface MIAudioCollectionVC ()
 @property (nonatomic,strong) MIAudioQueue *miAQ;
 @property (nonatomic,strong) MIAudioUnit *miAUnit;
+
+@property (nonatomic,strong) MIAudioQueuePlay *aqPlay;
 @end
 
 @implementation MIAudioCollectionVC
@@ -33,6 +36,14 @@
     return _miAUnit;
 }
 
+- (MIAudioQueuePlay *)aqPlay
+{
+    if (!_aqPlay) {
+        _aqPlay = [[MIAudioQueuePlay alloc] init];
+    }
+    return _aqPlay;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -45,7 +56,7 @@
 }
 
 - (IBAction)onPressedBtnQueuePlay:(id)sender {
-    
+    [self.aqPlay startPlay];
 }
 
 #pragma mark -AudioUnit的操作

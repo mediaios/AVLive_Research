@@ -16,8 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopRecorder;
 - (void)startRecorder;
 
-- (void)startPlay;
-
 @end
 
 NS_ASSUME_NONNULL_END
