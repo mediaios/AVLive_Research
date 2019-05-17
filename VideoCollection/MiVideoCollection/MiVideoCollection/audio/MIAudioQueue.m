@@ -8,8 +8,13 @@
 
 #import "MIAudioQueue.h"
 #import <AVFoundation/AVFoundation.h>
-#import "MIConst.h"
 
+
+#define kAudioSampleRate            48000
+#define kAudioFramesPerPacket       1
+#define kAudioPCMTotalPacket        512
+#define kAudioBytesPerPacket        2
+#define kQueueBuffers 3  // 输出音频队列缓冲个数
 
 /*!
  @discussion
@@ -69,12 +74,11 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
 }
 
 
-
 @interface MIAudioQueue()
 {
     AudioStreamBasicDescription     dataFormat;
     AudioQueueRef                   mQueue;
-    AudioQueueBufferRef             mBuffers[kNumberQueueBuffers];
+    AudioQueueBufferRef             mBuffers[kQueueBuffers];
 }
 @end
 
@@ -87,34 +91,49 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         return;
     }
     
-    [self settingAndStartAVAudioSession];
-    [self setUpAudioQueueWithFormatID:kAudioFormatLinearPCM];
+    /*** create audiosession ***/
+    NSError *error = nil;
+    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:&error];  // if onlay record , setting AVAudioSessionCategoryRecord; if only play , setting AVAudioSessionCategoryPlayback
+    if (!ret) {
+        NSLog(@"AppRecordAudio,%s,setting AVAudioSession category failed",__func__);
+        return;
+    }
+    ret = [[AVAudioSession sharedInstance] setActive:YES error:&error];
+    if (!ret) {
+        NSLog(@"AppRecordAudio,%s,start audio session failed",__func__);
+        return;
+    }
     
     
+    /*** setup audio sample rate , channels number, and format ID ***/
+    memset(&dataFormat, 0, sizeof(dataFormat));
+    UInt32 size = sizeof(dataFormat.mSampleRate);
+    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate, &size, &dataFormat.mSampleRate);
+    dataFormat.mSampleRate = kAudioSampleRate;
+    size = sizeof(dataFormat.mChannelsPerFrame);
+    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &dataFormat.mChannelsPerFrame);
+    dataFormat.mFormatID = kAudioFormatLinearPCM;
+    dataFormat.mChannelsPerFrame = 1;
+    dataFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
+    dataFormat.mBitsPerChannel = 16;
+    dataFormat.mBytesPerPacket = dataFormat.mBytesPerFrame = (dataFormat.mBitsPerChannel / 8) * dataFormat.mChannelsPerFrame;
+    dataFormat.mFramesPerPacket = kAudioFramesPerPacket; // AudioQueue collection pcm data , need to set as this
+
+    /*** 设置录音回调函数 ***/
     OSStatus status = 0;
     //    int bufferByteSize = 0;
-    UInt32 size = sizeof(dataFormat);
-    
+    size = sizeof(dataFormat);
     status = AudioQueueNewInput(&dataFormat, inputAudioQueueBufferHandler, (__bridge void *)self, NULL, NULL, 0, &mQueue);
     if (status != noErr) {
         NSLog(@"AppRecordAudio,%s,AudioQueueNewInput failed status:%d ",__func__,(int)status);
     }
     
-    status = AudioQueueGetProperty(mQueue, kAudioQueueProperty_StreamDescription, &dataFormat, &size);
-    if (status != noErr) {
-        NSLog(@"AppRecordAudio,%s,kAudioQueueProperty_StreamDescription failed status:%d ",__func__,(int)status);
-    }
-    
-    NSLog(@"AppRecordAudio,%s,pcm raw data buff number:%d, channel number:%u",__func__,kNumberQueueBuffers,
-          dataFormat.mChannelsPerFrame);
-    
-    for (int i = 0 ; i < kNumberQueueBuffers; i++) {
-        status = AudioQueueAllocateBuffer(mQueue, kAudioQueueRecorderPCMTotalPacket * kAudioQueueRecorderAudioBytesPerPacket * dataFormat.mChannelsPerFrame, &mBuffers[i]);
-        NSLog(@"AppRecordAudio,%s,AudioQueueAllocateBuffer status:%d ",__func__,(int)status);
+    for (int i = 0 ; i < kQueueBuffers; i++) {
+        status = AudioQueueAllocateBuffer(mQueue, kAudioPCMTotalPacket * kAudioBytesPerPacket * dataFormat.mChannelsPerFrame, &mBuffers[i]);
         status = AudioQueueEnqueueBuffer(mQueue, mBuffers[i], 0, NULL);
-        NSLog(@"AppRecordAudio,%s,AudioQueueEnqueueBuffer status:%d ",__func__,(int)status);
     }
     
+    /*** start audioQueue ***/
     status = AudioQueueStart(mQueue, NULL);
     if (status != noErr) {
         NSLog(@"AppRecordAudio,%s,AudioQueueStart failed status:%d  ",__func__,(int)status);
@@ -133,7 +152,7 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         OSStatus stopRes = AudioQueueStop(mQueue, true);
         
         if (stopRes == noErr) {
-            for (int i = 0; i < kNumberQueueBuffers; i++) {
+            for (int i = 0; i < kQueueBuffers; i++) {
                 AudioQueueFreeBuffer(mQueue, mBuffers[i]);
             }
         }else{
@@ -143,47 +162,6 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         AudioQueueDispose(mQueue, true);
         mQueue = NULL;
     }
-}
-
-#pragma mark --about AudioQueue method
-- (void)setUpAudioQueueWithFormatID:(UInt32)formatID
-{
-    // setup audio sample rate , channels number, and format ID
-    memset(&dataFormat, 0, sizeof(dataFormat));
-    
-    UInt32 size = sizeof(dataFormat.mSampleRate);
-    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate, &size, &dataFormat.mSampleRate);
-    dataFormat.mSampleRate = kAudioQueueRecorderSampleRate;
-    
-    size = sizeof(dataFormat.mChannelsPerFrame);
-    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &dataFormat.mChannelsPerFrame);
-    
-    dataFormat.mFormatID = formatID;
-    dataFormat.mChannelsPerFrame = 1;
-    
-    if (formatID == kAudioFormatLinearPCM) {
-        dataFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
-        dataFormat.mBitsPerChannel = 16;
-        dataFormat.mBytesPerPacket = dataFormat.mBytesPerFrame = (dataFormat.mBitsPerChannel / 8) * dataFormat.mChannelsPerFrame;
-        dataFormat.mFramesPerPacket = kAudioQueueRecorderPCMFramesPerPacket; // AudioQueue collection pcm data , need to set as this
-    }
-}
-
-#pragma mark --setting AVAudioSession
-- (void)settingAndStartAVAudioSession
-{
-    NSError *error = nil;
-    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];  // if onlay record , setting AVAudioSessionCategoryRecord; if only play , setting AVAudioSessionCategoryPlayback
-    if (!ret) {
-        NSLog(@"AppRecordAudio,%s,setting AVAudioSession category failed",__func__);
-        return;
-    }
-    ret = [[AVAudioSession sharedInstance] setActive:YES error:&error];
-    if (!ret) {
-        NSLog(@"AppRecordAudio,%s,start audio session failed",__func__);
-        return;
-    }
-    
 }
 
 
