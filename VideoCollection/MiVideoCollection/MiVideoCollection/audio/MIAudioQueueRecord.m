@@ -1,12 +1,12 @@
 //
-//  MIAudioQueue.m
+//  MIAudioQueueRecord.m
 //  MiVideoCollection
 //
 //  Created by mediaios on 2019/5/15.
 //  Copyright © 2019 iosmediadev@gmail.com. All rights reserved.
 //
 
-#import "MIAudioQueue.h"
+#import "MIAudioQueueRecord.h"
 #import <AVFoundation/AVFoundation.h>
 #import "MIConst.h"
 
@@ -50,7 +50,7 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
     }
     createCount++;
     
-    MIAudioQueue *miAQ = (__bridge MIAudioQueue *)inUserData;
+    MIAudioQueueRecord *miAQ = (__bridge MIAudioQueueRecord *)inUserData;
     if (createCount <= 800) {
         void *bufferData = inBuffer->mAudioData;
         UInt32 buffersize = inBuffer->mAudioDataByteSize;
@@ -70,7 +70,7 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
 
 
 
-@interface MIAudioQueue()
+@interface MIAudioQueueRecord()
 {
     AudioStreamBasicDescription     dataFormat;
     AudioQueueRef                   mQueue;
@@ -78,7 +78,7 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
 }
 @end
 
-@implementation MIAudioQueue
+@implementation MIAudioQueueRecord
 
 
 - (void)createAudioSession

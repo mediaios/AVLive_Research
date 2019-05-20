@@ -18,7 +18,7 @@
 		3D7FA7E92287D1340083D8BD /* MiVideoCollectVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D7FA7E82287D1340083D8BD /* MiVideoCollectVC.m */; };
 		3D7FA7EE2287FB390083D8BD /* MICalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D7FA7ED2287FB390083D8BD /* MICalculator.m */; };
 		3D995829228C6C4200666D7D /* MIAudioCollectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D995828228C6C4200666D7D /* MIAudioCollectionVC.m */; };
-		3D99582C228C6D7400666D7D /* MIAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D99582B228C6D7400666D7D /* MIAudioQueue.m */; };
+		3D99582C228C6D7400666D7D /* MIAudioQueueRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D99582B228C6D7400666D7D /* MIAudioQueueRecord.m */; };
 		3D99582F228F0A8000666D7D /* MIAudioQueuePlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D99582E228F0A8000666D7D /* MIAudioQueuePlay.m */; };
 		AAD763B6228D380C00A79CF6 /* MIAudioUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD763B5228D380C00A79CF6 /* MIAudioUnit.m */; };
 /* End PBXBuildFile section */
@@ -63,8 +63,8 @@
 		3D7FA7ED2287FB390083D8BD /* MICalculator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MICalculator.m; sourceTree = "<group>"; };
 		3D995827228C6C4200666D7D /* MIAudioCollectionVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioCollectionVC.h; sourceTree = "<group>"; };
 		3D995828228C6C4200666D7D /* MIAudioCollectionVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioCollectionVC.m; sourceTree = "<group>"; };
-		3D99582A228C6D7400666D7D /* MIAudioQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioQueue.h; sourceTree = "<group>"; };
-		3D99582B228C6D7400666D7D /* MIAudioQueue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioQueue.m; sourceTree = "<group>"; };
+		3D99582A228C6D7400666D7D /* MIAudioQueueRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioQueueRecord.h; sourceTree = "<group>"; };
+		3D99582B228C6D7400666D7D /* MIAudioQueueRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioQueueRecord.m; sourceTree = "<group>"; };
 		3D99582D228F0A8000666D7D /* MIAudioQueuePlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioQueuePlay.h; sourceTree = "<group>"; };
 		3D99582E228F0A8000666D7D /* MIAudioQueuePlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioQueuePlay.m; sourceTree = "<group>"; };
 		AAD763B3228D368E00A79CF6 /* MIConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIConst.h; sourceTree = "<group>"; };
@@ -159,8 +159,8 @@
 			children = (
 				3D995827228C6C4200666D7D /* MIAudioCollectionVC.h */,
 				3D995828228C6C4200666D7D /* MIAudioCollectionVC.m */,
-				3D99582A228C6D7400666D7D /* MIAudioQueue.h */,
-				3D99582B228C6D7400666D7D /* MIAudioQueue.m */,
+				3D99582A228C6D7400666D7D /* MIAudioQueueRecord.h */,
+				3D99582B228C6D7400666D7D /* MIAudioQueueRecord.m */,
 				AAD763B4228D380C00A79CF6 /* MIAudioUnit.h */,
 				AAD763B5228D380C00A79CF6 /* MIAudioUnit.m */,
 				3D99582D228F0A8000666D7D /* MIAudioQueuePlay.h */,
@@ -314,7 +314,7 @@
 				3D7FA7BA228685560083D8BD /* ViewController.m in Sources */,
 				3D99582F228F0A8000666D7D /* MIAudioQueuePlay.m in Sources */,
 				3D995829228C6C4200666D7D /* MIAudioCollectionVC.m in Sources */,
-				3D99582C228C6D7400666D7D /* MIAudioQueue.m in Sources */,
+				3D99582C228C6D7400666D7D /* MIAudioQueueRecord.m in Sources */,
 				3D7FA7E92287D1340083D8BD /* MiVideoCollectVC.m in Sources */,
 				3D7FA7C5228685580083D8BD /* main.m in Sources */,
 				3D7FA7B7228685560083D8BD /* AppDelegate.m in Sources */,

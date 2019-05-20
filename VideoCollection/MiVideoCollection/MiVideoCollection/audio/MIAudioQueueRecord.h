@@ -1,5 +1,5 @@
 //
-//  MIAudioQueue.h
+//  MIAudioQueueRecord.h
 //  MiVideoCollection
 //
 //  Created by mediaios on 2019/5/15.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MIAudioQueue : NSObject
+@interface MIAudioQueueRecord : NSObject
 
 @property (nonatomic,assign) BOOL m_isRunning;
 - (void)stopRecorder;

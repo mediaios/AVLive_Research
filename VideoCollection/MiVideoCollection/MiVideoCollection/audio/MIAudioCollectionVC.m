@@ -7,12 +7,12 @@
 //
 
 #import "MIAudioCollectionVC.h"
-#import "MIAudioQueue.h"
+#import "MIAudioQueueRecord.h"
 #import "MIAudioUnit.h"
 #import "MIAudioQueuePlay.h"
 
 @interface MIAudioCollectionVC ()
-@property (nonatomic,strong) MIAudioQueue *miAQ;
+@property (nonatomic,strong) MIAudioQueueRecord *miAQ;
 @property (nonatomic,strong) MIAudioUnit *miAUnit;
 
 @property (nonatomic,strong) MIAudioQueuePlay *aqPlay;
@@ -20,10 +20,10 @@
 
 @implementation MIAudioCollectionVC
 
-- (MIAudioQueue *)miAQ
+- (MIAudioQueueRecord *)miAQ
 {
     if (!_miAQ) {
-        _miAQ = [[MIAudioQueue alloc] init];
+        _miAQ = [[MIAudioQueueRecord alloc] init];
     }
     return _miAQ;
 }
