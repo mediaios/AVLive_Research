@@ -10,12 +10,14 @@
 #import "MIAudioQueueRecord.h"
 #import "MIAudioUnit.h"
 #import "MIAudioQueuePlay.h"
+#import "MIAudioQueueConvert.h"
 
 @interface MIAudioCollectionVC ()
 @property (nonatomic,strong) MIAudioQueueRecord *miAQ;
 @property (nonatomic,strong) MIAudioUnit *miAUnit;
 
 @property (nonatomic,strong) MIAudioQueuePlay *aqPlay;
+@property (nonatomic,strong) MIAudioQueueConvert *queueConvert;
 @end
 
 @implementation MIAudioCollectionVC
@@ -44,6 +46,14 @@
     return _aqPlay;
 }
 
+- (MIAudioQueueConvert *)queueConvert
+{
+    if (!_queueConvert) {
+        _queueConvert = [[MIAudioQueueConvert alloc] init];
+    }
+    return _queueConvert;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -58,6 +68,11 @@
 - (IBAction)onPressedBtnQueuePlay:(id)sender {
     [self.aqPlay startPlay];
 }
+
+- (IBAction)onPressedBtnQueueConvert:(id)sender {
+    [self.queueConvert startRecorder];
+}
+
 
 #pragma mark -AudioUnit的操作
 

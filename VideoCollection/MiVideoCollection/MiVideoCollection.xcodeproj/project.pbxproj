@@ -20,6 +20,7 @@
 		3D995829228C6C4200666D7D /* MIAudioCollectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D995828228C6C4200666D7D /* MIAudioCollectionVC.m */; };
 		3D99582C228C6D7400666D7D /* MIAudioQueueRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D99582B228C6D7400666D7D /* MIAudioQueueRecord.m */; };
 		3D99582F228F0A8000666D7D /* MIAudioQueuePlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D99582E228F0A8000666D7D /* MIAudioQueuePlay.m */; };
+		AA8AF59A22924AE300BE463E /* MIAudioQueueConvert.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8AF59922924AE300BE463E /* MIAudioQueueConvert.m */; };
 		AAD763B6228D380C00A79CF6 /* MIAudioUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD763B5228D380C00A79CF6 /* MIAudioUnit.m */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,8 @@
 		3D99582B228C6D7400666D7D /* MIAudioQueueRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioQueueRecord.m; sourceTree = "<group>"; };
 		3D99582D228F0A8000666D7D /* MIAudioQueuePlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioQueuePlay.h; sourceTree = "<group>"; };
 		3D99582E228F0A8000666D7D /* MIAudioQueuePlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioQueuePlay.m; sourceTree = "<group>"; };
+		AA8AF59822924AE300BE463E /* MIAudioQueueConvert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioQueueConvert.h; sourceTree = "<group>"; };
+		AA8AF59922924AE300BE463E /* MIAudioQueueConvert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioQueueConvert.m; sourceTree = "<group>"; };
 		AAD763B3228D368E00A79CF6 /* MIConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIConst.h; sourceTree = "<group>"; };
 		AAD763B4228D380C00A79CF6 /* MIAudioUnit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIAudioUnit.h; sourceTree = "<group>"; };
 		AAD763B5228D380C00A79CF6 /* MIAudioUnit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIAudioUnit.m; sourceTree = "<group>"; };
@@ -161,10 +164,12 @@
 				3D995828228C6C4200666D7D /* MIAudioCollectionVC.m */,
 				3D99582A228C6D7400666D7D /* MIAudioQueueRecord.h */,
 				3D99582B228C6D7400666D7D /* MIAudioQueueRecord.m */,
-				AAD763B4228D380C00A79CF6 /* MIAudioUnit.h */,
-				AAD763B5228D380C00A79CF6 /* MIAudioUnit.m */,
 				3D99582D228F0A8000666D7D /* MIAudioQueuePlay.h */,
 				3D99582E228F0A8000666D7D /* MIAudioQueuePlay.m */,
+				AA8AF59822924AE300BE463E /* MIAudioQueueConvert.h */,
+				AA8AF59922924AE300BE463E /* MIAudioQueueConvert.m */,
+				AAD763B4228D380C00A79CF6 /* MIAudioUnit.h */,
+				AAD763B5228D380C00A79CF6 /* MIAudioUnit.m */,
 			);
 			path = audio;
 			sourceTree = "<group>";
@@ -310,6 +315,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA8AF59A22924AE300BE463E /* MIAudioQueueConvert.m in Sources */,
 				AAD763B6228D380C00A79CF6 /* MIAudioUnit.m in Sources */,
 				3D7FA7BA228685560083D8BD /* ViewController.m in Sources */,
 				3D99582F228F0A8000666D7D /* MIAudioQueuePlay.m in Sources */,
