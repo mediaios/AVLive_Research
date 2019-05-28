@@ -7,26 +7,32 @@
 //
 
 #import "MIAudioQueueConvert.h"
-#import <AVFoundation/AVFoundation.h>
-#import <AudioToolbox/AudioToolbox.h>
 #import "MIConst.h"
 
 AudioStreamBasicDescription outAudioStreamDes;
 AudioConverterRef miAudioConvert;
 
+static size_t  _pcmBufferSize;
+static char* _pcmBuffer;
 
 // AudioConverterRef Callback
-OSStatus encodeConverterComplexInputDataProc(AudioConverterRef              inAudioConverter,
+OSStatus pcmEncodeConverterInputCallback(AudioConverterRef              inAudioConverter,
                                              UInt32                         *ioNumberDataPackets,
                                              AudioBufferList                *ioData,
                                              AudioStreamPacketDescription   **outDataPacketDescription,
                                              void                           *inUserData) {
+    MIAudioQueueConvert *encoder = (__bridge MIAudioQueueConvert *)(inUserData);
     
-    ioData->mBuffers[0].mData           = inUserData;
-    ioData->mBuffers[0].mNumberChannels = outAudioStreamDes.mChannelsPerFrame;
-    ioData->mBuffers[0].mDataByteSize   = 1024 * 2 * outAudioStreamDes.mChannelsPerFrame;
+    UInt32 requestedPackets = *ioNumberDataPackets;
+    size_t copiedSamples = [encoder copyPCMSamplesIntoBuffer:ioData];
+    if (copiedSamples < requestedPackets) {
+        //PCM 缓冲区还没满
+        *ioNumberDataPackets = 0;
+        return -1;
+    }
+    *ioNumberDataPackets = 1;
     
-    return 0;
+    return noErr;
 }
 
 /*!
@@ -42,7 +48,7 @@ OSStatus encodeConverterComplexInputDataProc(AudioConverterRef              inAu
  参数中包描述符（packet descriptions）的数量，如果你正在录制一个VBR(可变比特率（variable bitrate））格式, 音频队列将会提供这个参数给你的回调函数，这个参数可以让你传递给AudioFileWritePackets函数. CBR (常量比特率（constant bitrate）) 格式不使用包描述符。对于CBR录制，音频队列会设置这个参数并且将inPacketDescs这个参数设置为NULL
  
  */
-static void inputAudioQueueBufferHandler(void * __nullable               inUserData,
+static void recordAudioCallBack(void * __nullable               inUserData,
                                          AudioQueueRef                   inAQ,
                                          AudioQueueBufferRef             inBuffer,
                                          const AudioTimeStamp *          inStartTime,
@@ -53,19 +59,17 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         NSLog(@"AppRecordAudio,%s,inUserData is null",__func__);
         return;
     }
+    _pcmBufferSize = 0;
+    _pcmBuffer = NULL;
+    _pcmBuffer = inBuffer->mAudioData;
+    _pcmBufferSize = inBuffer->mAudioDataByteSize;
     
-
-    
-    NSLog(@"%s, audio length: %d",__func__,inBuffer->mAudioDataByteSize);
     MIAudioQueueConvert *miAQ = (__bridge MIAudioQueueConvert *)inUserData;
-    [miAQ convertPCMToAAC:miAQ];
+    [miAQ encodePCMToAAC:miAQ];
     if (miAQ.m_isRunning) {
         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
     }
 }
-
-
-
 
 @interface MIAudioQueueConvert()
 {
@@ -78,10 +82,6 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
 @property (nonatomic) uint8_t *aacBuffer;
 @property (nonatomic) NSUInteger aacBufferSize;
 @end
-
-
-
-
 
 @implementation MIAudioQueueConvert
 
@@ -131,13 +131,13 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
     inAudioStreamDes.mFramesPerPacket = kAudioFramesPerPacket; // AudioQueue collection pcm data , need to set as this
 }
 
-- (void)settingCallBackFunc
+- (void)settingRecordCallBackFunc
 {
     /*** 设置录音回调函数 ***/
     OSStatus status = 0;
     //    int bufferByteSize = 0;
     UInt32 size = sizeof(inAudioStreamDes);
-    status = AudioQueueNewInput(&inAudioStreamDes, inputAudioQueueBufferHandler, (__bridge void *)self, NULL, NULL, 0, &mQueue);
+    status = AudioQueueNewInput(&inAudioStreamDes, recordAudioCallBack, (__bridge void *)self, NULL, NULL, 0, &mQueue);
     if (status != noErr) {
         NSLog(@"AppRecordAudio,%s,AudioQueueNewInput failed status:%d ",__func__,(int)status);
     }
@@ -148,7 +148,7 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
     }
 }
 
-- (void)setupAudioStreamDes
+- (void)settingDestAudioStreamDescription
 {
     outAudioStreamDes.mSampleRate = kAudioSampleRate;
     outAudioStreamDes.mFormatID = kAudioFormatMPEG4AAC;
@@ -165,90 +165,16 @@ static void inputAudioQueueBufferHandler(void * __nullable               inUserD
         NSLog(@"create convert failed...\n");
     }
     
-    
-    
-}
-
-
-static int initTime = 0;
-
-- (void)convertPCMToAAC:(MIAudioQueueConvert *)convert
-{
-    if (initTime == 0) {
-        initTime = 1;
-        [self setupAudioStreamDes];
-    }
-    
-    UInt32   maxPacketSize    = 0;
-    UInt32   size             = sizeof(maxPacketSize);
-    OSStatus status;
-    
-    status = AudioConverterGetProperty(miAudioConvert,
-                                       kAudioConverterPropertyMaximumOutputPacketSize,
-                                       &size,
-                                       &maxPacketSize);
+    UInt32 targetSize   = sizeof(outAudioStreamDes);
+    UInt32 bitRate  =  64000;
+    targetSize      = sizeof(bitRate);
+    status          = AudioConverterSetProperty(miAudioConvert,
+                                                kAudioConverterEncodeBitRate,
+                                                targetSize, &bitRate);
     if (status != noErr) {
-        NSLog(@"Audio Recorder, kAudioConverterPropertyMaximumOutputPacketSize status:%d \n",(int)status);
-    }
-    
-     memset(_aacBuffer, 0, _aacBufferSize);
-    
-    AudioBufferList *bufferList             = (AudioBufferList *)malloc(sizeof(AudioBufferList));
-    bufferList->mNumberBuffers              = 1;
-    bufferList->mBuffers[0].mNumberChannels = outAudioStreamDes.mChannelsPerFrame;
-    bufferList->mBuffers[0].mData           = _aacBuffer;
-    bufferList->mBuffers[0].mDataByteSize   = (int)_aacBufferSize;
-    
-    AudioStreamPacketDescription outputPacketDescriptions;
-    UInt32 inNumPackets = 1;
-    status = AudioConverterFillComplexBuffer(miAudioConvert,
-                                             encodeConverterComplexInputDataProc,
-                                             (__bridge void *)(self),//inBuffer->mAudioData,
-                                             &inNumPackets,
-                                             bufferList,
-                                             &outputPacketDescriptions);
-    if(status != noErr){
-        NSLog(@"Audio Recorder, set AudioConverterFillComplexBuffer status:%d inNumPackets:%d \n",(int)status, inNumPackets);
-        free(bufferList->mBuffers[0].mData);
-        free(bufferList);
+        NSLog(@"set bitrate error...");
         return;
-    }else{
-        NSData *aacData = [NSData dataWithBytes:bufferList->mBuffers[0].mData length:bufferList->mBuffers[0].mDataByteSize];
-        static int createCount = 0;
-        static FILE *fp_aac = NULL;
-        if (createCount == 0) {
-            NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-            NSString *debugUrl = [paths stringByAppendingPathComponent:@"debug"] ;
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            [fileManager createDirectoryAtPath:debugUrl withIntermediateDirectories:YES attributes:nil error:nil];
-
-            NSString *audioFile = [paths stringByAppendingPathComponent:@"debug/queue_aac_48k.pcm"] ;
-            fp_aac = fopen([audioFile UTF8String], "wb++");
-        }
-        createCount++;
-
-
-        if (createCount <= 800) {
-            NSData *rawAAC = [NSData dataWithBytes:bufferList->mBuffers[0].mData length:bufferList->mBuffers[0].mDataByteSize];
-            NSData *adtsHeader = [self adtsDataForPacketLength:rawAAC.length];
-            NSMutableData *fullData = [NSMutableData dataWithData:adtsHeader];
-            [fullData appendData:rawAAC];
-            
-            void * bufferData = fullData.bytes;
-            int buffersize = fullData.length;
-            
-            fwrite((uint8_t *)bufferData, 1, buffersize, fp_aac);
-        }else{
-            fclose(fp_aac);
-            NSLog(@"AudioQueue, close PCM file ");
-            [self stopRecorder];
-            createCount = 0;
-        }
-        
-        
-        NSLog(@"qizhang---debug----aac data: %d",aacData.length);
     }
-    
 }
 
 
@@ -302,11 +228,71 @@ static int initTime = 0;
 }
 
 
+static int initTime = 0;
+- (void)encodePCMToAAC:(MIAudioQueueConvert *)convert
+{
+    if (initTime == 0) {
+        initTime = 1;
+        [self settingDestAudioStreamDescription];
+    }
+    OSStatus status;
+    memset(_aacBuffer, 0, _aacBufferSize);
+    
+    AudioBufferList *bufferList             = (AudioBufferList *)malloc(sizeof(AudioBufferList));
+    bufferList->mNumberBuffers              = 1;
+    bufferList->mBuffers[0].mNumberChannels = outAudioStreamDes.mChannelsPerFrame;
+    bufferList->mBuffers[0].mData           = _aacBuffer;
+    bufferList->mBuffers[0].mDataByteSize   = (int)_aacBufferSize;
+    
+    AudioStreamPacketDescription outputPacketDescriptions;
+    UInt32 inNumPackets = 1;
+    status = AudioConverterFillComplexBuffer(miAudioConvert,
+                                             pcmEncodeConverterInputCallback,
+                                             (__bridge void *)(self),//inBuffer->mAudioData,
+                                             &inNumPackets,
+                                             bufferList,
+                                             &outputPacketDescriptions);
+    
+    if (status == noErr) {
+        NSData *aacData = [NSData dataWithBytes:bufferList->mBuffers[0].mData length:bufferList->mBuffers[0].mDataByteSize];
+        static int createCount = 0;
+        static FILE *fp_aac = NULL;
+        if (createCount == 0) {
+            NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            NSString *debugUrl = [paths stringByAppendingPathComponent:@"debug"] ;
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            [fileManager createDirectoryAtPath:debugUrl withIntermediateDirectories:YES attributes:nil error:nil];
+            
+            NSString *audioFile = [paths stringByAppendingPathComponent:@"debug/queue_aac_48k.aac"] ;
+            fp_aac = fopen([audioFile UTF8String], "wb++");
+        }
+        createCount++;
+        if (createCount <= 800) {
+            NSData *rawAAC = [NSData dataWithBytes:bufferList->mBuffers[0].mData length:bufferList->mBuffers[0].mDataByteSize];
+            NSData *adtsHeader = [self adtsDataForPacketLength:rawAAC.length];
+            NSMutableData *fullData = [NSMutableData dataWithData:adtsHeader];
+            [fullData appendData:rawAAC];
+            
+            void * bufferData = fullData.bytes;
+            int buffersize = fullData.length;
+            
+            fwrite((uint8_t *)bufferData, 1, buffersize, fp_aac);
+        }else{
+            fclose(fp_aac);
+            NSLog(@"AudioQueue, close aac file ");
+            [self stopRecorder];
+            createCount = 0;
+        }
+    }
+}
+
+
+
 - (void)startRecorder
 {
     [self createAudioSession];
     [self settingInputAudioFormat];
-    [self settingCallBackFunc];
+    [self settingRecordCallBackFunc];
     
     if (self.m_isRunning) {
         return;
@@ -343,6 +329,21 @@ static int initTime = 0;
     }
 }
 
+
+/**
+ *  填充PCM到缓冲区
+ */
+- (size_t) copyPCMSamplesIntoBuffer:(AudioBufferList*)ioData {
+    size_t originalBufferSize = _pcmBufferSize;
+    if (!originalBufferSize) {
+        return 0;
+    }
+    ioData->mBuffers[0].mData = _pcmBuffer;
+    ioData->mBuffers[0].mDataByteSize = (int)_pcmBufferSize;
+    _pcmBuffer = NULL;
+    _pcmBufferSize = 0;
+    return originalBufferSize;
+}
 
 - (NSData*)adtsDataForPacketLength:(NSUInteger)packetLength {
     int adtsLength = 7;

@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopRecorder;
 - (void)startRecorder;
 
-- (void)convertPCMToAAC:(MIAudioQueueConvert *)convert;
+- (void)encodePCMToAAC:(MIAudioQueueConvert *)convert;
+- (size_t)copyPCMSamplesIntoBuffer:(AudioBufferList*)ioData;
 
 @end
 
