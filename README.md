@@ -11,9 +11,9 @@ ios音视频直播及播放技术预研总结
 
 ### 音频采集 
 
-* [音频基础知识](https://maxwellqi.github.io/ios-audio-intro/)
+* [音频基础知识](https://juejin.im/post/5ced12e6f265da1b5d578bb5)
 * [Audio Queue Services Programming Guide](https://juejin.im/post/5cdb8a88518825123570f4f3)
-* audio queue
+* [利用AudioQueue做音频采集编码和播放](https://juejin.im/post/5ced1568f265da1b6f4355b9)
 * audio unit
 
 ## 编码 
