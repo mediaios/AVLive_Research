@@ -124,7 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				3D995826228C6BCA00666D7D /* audio */,
-				3DF1ABB8228C6A5500B8D86A /* video */,
+				3DF1ABB8228C6A5500B8D86A /* video_collection */,
 				3D7FA7B5228685560083D8BD /* AppDelegate.h */,
 				3D7FA7B6228685560083D8BD /* AppDelegate.m */,
 				3D7FA7B8228685560083D8BD /* ViewController.h */,
@@ -174,7 +174,7 @@
 			path = audio;
 			sourceTree = "<group>";
 		};
-		3DF1ABB8228C6A5500B8D86A /* video */ = {
+		3DF1ABB8228C6A5500B8D86A /* video_collection */ = {
 			isa = PBXGroup;
 			children = (
 				3D7FA7EC2287FB390083D8BD /* MICalculator.h */,
@@ -182,7 +182,7 @@
 				3D7FA7E72287D1340083D8BD /* MiVideoCollectVC.h */,
 				3D7FA7E82287D1340083D8BD /* MiVideoCollectVC.m */,
 			);
-			path = video;
+			path = video_collection;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
