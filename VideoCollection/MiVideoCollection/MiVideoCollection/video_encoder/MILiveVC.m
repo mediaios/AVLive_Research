@@ -9,6 +9,14 @@
 #import "MILiveVC.h"
 #import <AVFoundation/AVFoundation.h>
 #import "MIHWH264Encoder.h"
+#import "MISoftH264Encoder.h"
+
+
+typedef enum MIEncoderType{
+    MIEncoderType_Hw = 0, // 表示硬编码
+    MIEncoderType_Soft    // 表示软编码
+}MIEncoderType;
+
 
 @interface MILiveVC ()<AVCaptureVideoDataOutputSampleBufferDelegate,MIHWH264EncoderDelegate>
 @property (weak, nonatomic) IBOutlet UIView *m_displayView;
@@ -17,6 +25,8 @@
 @property (nonatomic,copy)   NSString *h264FilePath;
 @property (nonatomic,strong) NSFileHandle *fileHander;
 @property (nonatomic,strong) MIHWH264Encoder *hwH264Encoder;
+@property (nonatomic,strong) MISoftH264Encoder *softH264Encoder;
+@property (nonatomic,assign) MIEncoderType nowEncoderType;
 @end
 
 @implementation MILiveVC
@@ -27,7 +37,7 @@
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
-        _h264FilePath = [documentsDirectory stringByAppendingPathComponent:@"test.h264"];
+        _h264FilePath = [documentsDirectory stringByAppendingPathComponent:@"video/hwEncoder.h264"];
         [fileManager removeItemAtPath:_h264FilePath error:nil];
         [fileManager createFileAtPath:_h264FilePath contents:nil attributes:nil];
         _fileHander = [NSFileHandle fileHandleForWritingAtPath:_h264FilePath];
@@ -43,6 +53,27 @@
         [_hwH264Encoder settingEncoderParametersWithWidth:1080 height:1920 fps:30];
     }
     return _hwH264Encoder;
+}
+
+- (MISoftH264Encoder *)softH264Encoder
+{
+    if (!_softH264Encoder) {
+        _softH264Encoder = [MISoftH264Encoder getInstance];
+        
+        NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *videoDict = [paths stringByAppendingPathComponent:@"video"] ; // /softEncoder.h264
+        NSString *videoFile = [videoDict stringByAppendingPathComponent:@"/softEncoder.h264"];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if(![fileManager fileExistsAtPath:videoFile])
+        {
+            [fileManager createDirectoryAtPath:videoDict withIntermediateDirectories:YES attributes:nil error:nil];
+            FILE *vF = fopen([videoFile UTF8String], "wb+");
+            fclose(vF);
+        }
+        [_softH264Encoder setFileSavedPath:videoFile];
+        [_softH264Encoder setX264ResourceWithVideoWidth:1080 height:1920 bitrate:64000];
+    }
+    return _softH264Encoder;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -66,6 +97,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.nowEncoderType = MIEncoderType_Hw;
+    
     [self startCaptureSession];
     
     [self fileHander];
@@ -75,6 +108,25 @@
 
 - (IBAction)onPressedBtnDismiss:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)onPressedBtnSwitchToHwEncoder:(id)sender {
+    if (self.nowEncoderType == MIEncoderType_Soft) {
+        [self stopPreview];
+        
+        self.nowEncoderType = MIEncoderType_Hw;
+        [self startPreview];
+    }
+    
+}
+
+- (IBAction)onPressedBtnSwitchToSoftEncoder:(id)sender {
+    if (self.nowEncoderType == MIEncoderType_Hw) {
+        [self stopPreview];
+        
+        self.nowEncoderType = MIEncoderType_Soft;
+        [self startPreview];
+    }
 }
 
 
@@ -101,8 +153,6 @@
     [session addInput:input];
     
     _video_output = [[AVCaptureVideoDataOutput alloc] init];
-//    AVCaptureConnection *captureConn = [_video_output connectionWithMediaType:AVMediaTypeVideo];
-//    captureConn.videoOrientation = AVCaptureVideoOrientationPortrait;
     [session addOutput:_video_output];
     
     // Specify the pixel format
@@ -112,8 +162,6 @@
     _video_output.alwaysDiscardsLateVideoFrames = NO;
     // Configure your output.
     dispatch_queue_t queue = dispatch_queue_create("videoQueue", NULL);
-    //    dispatch_queue_t queueaudio = dispatch_queue_create("audioQueue", NULL);
-    //    [audio_output setSampleBufferDelegate:self queue:queueaudio];
     [_video_output setSampleBufferDelegate:self queue:queue];
     
     
@@ -188,6 +236,11 @@
 {
     if ([_m_session isRunning]) {
         [_m_session stopRunning];
+        
+        if (self.nowEncoderType == MIEncoderType_Soft) {
+            [self.softH264Encoder freeX264Resource];
+        }
+        
     }
 }
 
@@ -195,7 +248,10 @@
 #pragma mark AVCaptureVideoDataOutputSampleBufferDelegate
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
-    [self.hwH264Encoder encoder:sampleBuffer];
+    if (sampleBuffer) {
+        self.nowEncoderType == MIEncoderType_Hw ? [self.hwH264Encoder encoder:sampleBuffer] : [self.softH264Encoder encoderToH264:sampleBuffer];
+    }
+   
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, 6_0)
