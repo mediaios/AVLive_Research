@@ -71,7 +71,7 @@ typedef enum MIEncoderType{
             fclose(vF);
         }
         [_softH264Encoder setFileSavedPath:videoFile];
-        [_softH264Encoder setX264ResourceWithVideoWidth:1080 height:1920 bitrate:64000];
+        [_softH264Encoder setEncoderVideoWidth:1080 height:1920 bitrate:64000];
     }
     return _softH264Encoder;
 }
@@ -238,7 +238,7 @@ typedef enum MIEncoderType{
         [_m_session stopRunning];
         
         if (self.nowEncoderType == MIEncoderType_Soft) {
-            [self.softH264Encoder freeX264Resource];
+            [self.softH264Encoder freeH264Resource];
         }
         
     }

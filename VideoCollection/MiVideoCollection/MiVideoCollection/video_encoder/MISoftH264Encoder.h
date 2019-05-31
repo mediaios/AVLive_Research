@@ -18,6 +18,7 @@ extern "C"
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavutil/avstring.h"
+#include "libavutil/imgutils.h"
 #include "libavutil/error.h"
 #include "libswscale/swscale.h"
 #include <libavutil/dict.h>
@@ -33,9 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)getInstance;
 - (void)setFileSavedPath:(NSString *)path;
-- (int)setX264ResourceWithVideoWidth:(int)width height:(int)height bitrate:(int)bitrate;
+- (int)setEncoderVideoWidth:(int)width height:(int)height bitrate:(int)bitrate;
 - (void)encoderToH264:(CMSampleBufferRef)sampleBuffer;
-- (void)freeX264Resource;
+- (void)freeH264Resource;
 
 @end
 
