@@ -20,11 +20,8 @@ ios音视频直播及播放技术预研总结
 
 ### 视频编码
 
-* H264编码 
-* H264硬编码 
-* H264软编码(ffmpeg)
- * 如何在mac上编译出ffmpeg库
- * 对ffmpeg做一个简单的介绍
+* [视频的基本参数及H264编解码相关概念](https://juejin.im/post/5cf07dfdf265da1b8466ca8c)
+* [视频H264硬编码和软编码&编译ffmpeg库及环境搭建](https://juejin.im/post/5cf0cf63f265da1bc64ba8e0)
 
 * H265编码
 * H265硬编码
