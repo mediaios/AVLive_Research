@@ -7,6 +7,7 @@
 //
 
 #import "MIHWH264Encoder.h"
+#import "MIRtpmClient.h"
 
 
 void  miEncoderVideoCallBack(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer)
@@ -78,7 +79,7 @@ void  miEncoderVideoCallBack(void *outputCallbackRefCon, void *sourceFrameRefCon
     //    AVFormatControl::GetInstance()->addH264Data(bufferDataPointer, (int)blockBufferLength,dtsAfter, NO, isKeyframe);
     
     [encoder.delegate acceptEncoderData:bufferDataPointer length:(int)blockBufferLength naluType:H264Data_NALU_TYPE_NOIDR];
-    
+   
 }
 
 

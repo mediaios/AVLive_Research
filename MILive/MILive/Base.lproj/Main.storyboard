@@ -377,30 +377,45 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m6u-RG-85e">
-                                <rect key="frame" x="5" y="49" width="70" height="50"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SeL-Oh-ld2">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m6u-RG-85e">
+                                        <rect key="frame" x="5" y="5" width="70" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="0xN-58-tFJ"/>
+                                            <constraint firstAttribute="width" constant="70" id="N4F-5Z-4OR"/>
+                                        </constraints>
+                                        <state key="normal" title="cancel"/>
+                                        <connections>
+                                            <action selector="onPressedBtnDismiss:" destination="iLs-dp-XOb" eventType="touchUpInside" id="IzF-I3-8Or"/>
+                                            <action selector="onPressedBtnDismiss:" destination="PlD-oT-aaK" eventType="touchUpInside" id="VZx-A3-bwW"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="70" id="2Oi-Oa-LS8"/>
-                                    <constraint firstAttribute="height" constant="50" id="bqv-gw-EPE"/>
+                                    <constraint firstItem="m6u-RG-85e" firstAttribute="leading" secondItem="SeL-Oh-ld2" secondAttribute="leading" constant="5" id="nyn-6v-hgh"/>
+                                    <constraint firstItem="m6u-RG-85e" firstAttribute="top" secondItem="SeL-Oh-ld2" secondAttribute="top" constant="5" id="sxc-mF-rti"/>
                                 </constraints>
-                                <state key="normal" title="cancel"/>
-                                <connections>
-                                    <action selector="onPressedBtnDismiss:" destination="iLs-dp-XOb" eventType="touchUpInside" id="IzF-I3-8Or"/>
-                                    <action selector="onPressedBtnDismiss:" destination="PlD-oT-aaK" eventType="touchUpInside" id="VZx-A3-bwW"/>
-                                </connections>
-                            </button>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="m6u-RG-85e" firstAttribute="top" secondItem="HJJ-UF-VPx" secondAttribute="top" constant="5" id="HVd-2T-xNl"/>
-                            <constraint firstItem="m6u-RG-85e" firstAttribute="leading" secondItem="HJJ-UF-VPx" secondAttribute="leading" constant="5" id="pc1-3L-1GL"/>
+                            <constraint firstItem="HJJ-UF-VPx" firstAttribute="bottom" secondItem="SeL-Oh-ld2" secondAttribute="bottom" id="cc2-s5-YZw"/>
+                            <constraint firstItem="SeL-Oh-ld2" firstAttribute="leading" secondItem="HJJ-UF-VPx" secondAttribute="leading" id="dn8-f7-n3d"/>
+                            <constraint firstItem="SeL-Oh-ld2" firstAttribute="top" secondItem="HJJ-UF-VPx" secondAttribute="top" id="mSf-hQ-L2g"/>
+                            <constraint firstItem="HJJ-UF-VPx" firstAttribute="trailing" secondItem="SeL-Oh-ld2" secondAttribute="trailing" id="tdZ-0D-0VP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="HJJ-UF-VPx"/>
                     </view>
+                    <connections>
+                        <outlet property="m_displayView" destination="SeL-Oh-ld2" id="cTC-E1-eCF"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CHy-cD-CoR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-101" y="-286"/>
+            <point key="canvasLocation" x="-59" y="-252"/>
         </scene>
         <!--Mi Video CollectVC-->
         <scene sceneID="I2d-fR-cHF">
