@@ -1,8 +1,8 @@
 //
-//  MIAudioCollectionVC.h
+//  MIPushStreamVC.h
 //  MILive
 //
-//  Created by mediaios on 2019/5/15.
+//  Created by mediaios on  2019/6/21.
 //  Copyright © 2019 iosmediadev@gmail.com. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MIAudioCollectionVC : UIViewController
+@interface MIPushStreamVC : UIViewController
 
 @end
 

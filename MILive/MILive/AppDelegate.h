@@ -3,7 +3,7 @@
 //  MILive
 //
 //  Created by ethan on 2019/6/21.
-//  Copyright © 2019 ucloud. All rights reserved.
+//  Copyright © 2019 iosmediadev@gmail.com. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

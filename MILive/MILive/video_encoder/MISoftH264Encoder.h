@@ -1,6 +1,6 @@
 //
 //  MISoftH264Encoder.h
-//  MiVideoCollection
+//  MILive
 //
 //  Created by mediaios on 2019/5/30.
 //  Copyright © 2019 iosmediadev@gmail.com. All rights reserved.

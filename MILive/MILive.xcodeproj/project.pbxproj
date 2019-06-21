@@ -27,6 +27,7 @@
 		AA27354622BCA6DA00ADC6A4 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AA27354522BCA6DA00ADC6A4 /* libiconv.tbd */; };
 		AA27354822BCA6E200ADC6A4 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AA27354722BCA6E200ADC6A4 /* libbz2.tbd */; };
 		AA27354A22BCA6E800ADC6A4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AA27354922BCA6E800ADC6A4 /* libz.tbd */; };
+		AA27354E22BCB05800ADC6A4 /* MIPushStreamVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27354D22BCB05800ADC6A4 /* MIPushStreamVC.m */; };
 		AACBF3B322BC882A000EA38A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AACBF3B222BC882A000EA38A /* AppDelegate.m */; };
 		AACBF3B622BC882A000EA38A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AACBF3B522BC882A000EA38A /* ViewController.m */; };
 		AACBF3B922BC882A000EA38A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AACBF3B722BC882A000EA38A /* Main.storyboard */; };
@@ -195,6 +196,8 @@
 		AA27354522BCA6DA00ADC6A4 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		AA27354722BCA6E200ADC6A4 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		AA27354922BCA6E800ADC6A4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		AA27354C22BCB05800ADC6A4 /* MIPushStreamVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIPushStreamVC.h; sourceTree = "<group>"; };
+		AA27354D22BCB05800ADC6A4 /* MIPushStreamVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIPushStreamVC.m; sourceTree = "<group>"; };
 		AACBF3AE22BC882A000EA38A /* MILive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MILive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AACBF3B122BC882A000EA38A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		AACBF3B222BC882A000EA38A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -270,9 +273,9 @@
 			children = (
 				AA2734AA22BCA60D00ADC6A4 /* MISoftH264Encoder.h */,
 				AA2734AB22BCA60D00ADC6A4 /* MILiveVC.h */,
+				AA2734AE22BCA60D00ADC6A4 /* MILiveVC.m */,
 				AA2734AC22BCA60D00ADC6A4 /* MISoftH264Encoder.mm */,
 				AA2734AD22BCA60D00ADC6A4 /* MIHWH264Encoder.h */,
-				AA2734AE22BCA60D00ADC6A4 /* MILiveVC.m */,
 				AA2734AF22BCA60D00ADC6A4 /* MIHWH264Encoder.m */,
 			);
 			path = video_encoder;
@@ -494,6 +497,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		AA27354B22BCB02300ADC6A4 /* push_stream */ = {
+			isa = PBXGroup;
+			children = (
+				AA27354C22BCB05800ADC6A4 /* MIPushStreamVC.h */,
+				AA27354D22BCB05800ADC6A4 /* MIPushStreamVC.m */,
+			);
+			path = push_stream;
+			sourceTree = "<group>";
+		};
 		AACBF3A522BC882A000EA38A = {
 			isa = PBXGroup;
 			children = (
@@ -522,6 +534,7 @@
 				AA27349E22BCA60D00ADC6A4 /* audio */,
 				AA2734B022BCA60D00ADC6A4 /* video_collection */,
 				AA2734A922BCA60D00ADC6A4 /* video_encoder */,
+				AA27354B22BCB02300ADC6A4 /* push_stream */,
 				AACBF3B122BC882A000EA38A /* AppDelegate.h */,
 				AACBF3B222BC882A000EA38A /* AppDelegate.m */,
 				AACBF3B422BC882A000EA38A /* ViewController.h */,
@@ -694,6 +707,7 @@
 				AA2734B922BCA60D00ADC6A4 /* MIAudioQueueRecord.m in Sources */,
 				AACBF3C122BC882C000EA38A /* main.m in Sources */,
 				AA2734B822BCA60D00ADC6A4 /* MIAudioQueueConvert.m in Sources */,
+				AA27354E22BCB05800ADC6A4 /* MIPushStreamVC.m in Sources */,
 				AA2734BD22BCA60D00ADC6A4 /* MiVideoCollectVC.m in Sources */,
 				AA2734B622BCA60D00ADC6A4 /* MIAudioCollectionVC.m in Sources */,
 				AACBF3B322BC882A000EA38A /* AppDelegate.m in Sources */,
