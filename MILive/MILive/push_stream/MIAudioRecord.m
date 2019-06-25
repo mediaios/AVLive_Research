@@ -8,7 +8,7 @@
 
 #import "MIAudioRecord.h"
 #import "MIConst.h"
-#import "MIRtpmClient.h"
+
 
 AudioStreamBasicDescription audioStreamDes;
 AudioConverterRef miAACConvert;
@@ -82,10 +82,25 @@ static void recordAudioCallBack(void * __nullable               inUserData,
 
 @property (nonatomic) uint8_t *aacBuffer;
 @property (nonatomic) NSUInteger aacBufferSize;
+
+@property (nonatomic) BOOL sentAudioHead;
+@property (nonatomic ,assign,readonly) char *asc;
 @end
 
 @implementation MIAudioRecord
 
+- (void)setAudioSampleRate{
+    NSInteger sampleRateIndex = 4;
+    self.asc[0] = 0x10 | ((sampleRateIndex>>1) & 0x3);
+    self.asc[1] = ((sampleRateIndex & 0x1)<<7) | ((/*self.numberOfChannels*/1 & 0xF) << 3);
+}
+
+- (void)setNumberOfChannels{
+    //    NSInteger sampleRateIndex = [self sampleRateIndex:self.audioSampleRate];
+    NSInteger sampleRateIndex = 4;
+    self.asc[0] = 0x10 | ((sampleRateIndex>>1) & 0x3);
+    self.asc[1] = ((sampleRateIndex & 0x1)<<7) | ((/*numberOfChannels*/1 & 0xF) << 3);
+}
 
 - (instancetype)init
 {
@@ -103,16 +118,25 @@ static void recordAudioCallBack(void * __nullable               inUserData,
 {
     /*** create audiosession ***/
     NSError *error = nil;
-    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:&error];  // if onlay record , setting AVAudioSessionCategoryRecord; if only play , setting AVAudioSessionCategoryPlayback
+//    BOOL ret = [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:&error];  // if onlay record , setting AVAudioSessionCategoryRecord; if only play , setting AVAudioSessionCategoryPlayback
+    
+    BOOL ret =  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionMixWithOthers error:nil];
+    
+    
     if (!ret) {
         NSLog(@"AppRecordAudio,%s,setting AVAudioSession category failed",__func__);
         return;
     }
+    [[AVAudioSession sharedInstance] setMode:AVAudioSessionModeVideoRecording error:&error];
     ret = [[AVAudioSession sharedInstance] setActive:YES error:&error];
     if (!ret) {
         NSLog(@"AppRecordAudio,%s,start audio session failed",__func__);
         return;
     }
+    
+    _asc = malloc(2);
+    [self setAudioSampleRate];
+    [self setNumberOfChannels];
 }
 
 - (void)settingInputAudioFormat
@@ -121,7 +145,7 @@ static void recordAudioCallBack(void * __nullable               inUserData,
     memset(&inAudioStreamDes, 0, sizeof(inAudioStreamDes));
     UInt32 size = sizeof(inAudioStreamDes.mSampleRate);
     AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate, &size, &inAudioStreamDes.mSampleRate);
-    inAudioStreamDes.mSampleRate = kAudioSampleRate;
+    inAudioStreamDes.mSampleRate = 44100;
     size = sizeof(inAudioStreamDes.mChannelsPerFrame);
     AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels, &size, &inAudioStreamDes.mChannelsPerFrame);
     inAudioStreamDes.mFormatID = kAudioFormatLinearPCM;
@@ -151,7 +175,7 @@ static void recordAudioCallBack(void * __nullable               inUserData,
 
 - (void)settingDestAudioStreamDescription
 {
-    audioStreamDes.mSampleRate = kAudioSampleRate;
+    audioStreamDes.mSampleRate = 44100;
     audioStreamDes.mFormatID = kAudioFormatMPEG4AAC;
     audioStreamDes.mBytesPerPacket = 0;
     audioStreamDes.mFramesPerPacket = 1024;
@@ -177,7 +201,6 @@ static void recordAudioCallBack(void * __nullable               inUserData,
         return;
     }
 }
-
 
 /**
  *  获取编解码器
@@ -228,7 +251,6 @@ static void recordAudioCallBack(void * __nullable               inUserData,
     return nil;
 }
 
-
 static int initTime = 0;
 - (void)encodePCMToAAC:(MIAudioRecord *)convert
 {
@@ -253,25 +275,22 @@ static int initTime = 0;
                                              &inNumPackets,
                                              bufferList,
                                              &outputPacketDescriptions);
-    
+    NSData *data = nil;
     if (status == noErr) {
-        NSData *aacData = [NSData dataWithBytes:bufferList->mBuffers[0].mData length:bufferList->mBuffers[0].mDataByteSize];
-        
         NSData *rawAAC = [NSData dataWithBytes:bufferList->mBuffers[0].mData length:bufferList->mBuffers[0].mDataByteSize];
-        NSData *adtsHeader = [self adtsDataForPacketLength:rawAAC.length];
-        
-        NSMutableData *fullData = [NSMutableData dataWithData:adtsHeader];
-        [fullData appendData:rawAAC];
-        
-        void * bufferData = fullData.bytes;
-        int buffersize = fullData.length;
-        
-//        fwrite((uint8_t *)bufferData, 1, buffersize, fp_aac);
-
+        if (!self.sentAudioHead) {
+            char exeData[2];
+            exeData[0] = self.asc[0];
+            exeData[1] = self.asc[1];
+            NSData *headerData =[NSData dataWithBytes:exeData length:2];
+            [self.delegate audioEncoder:self audioHeader:headerData];
+            self.sentAudioHead =  YES;
+        }else{
+            data = rawAAC;
+            [self.delegate audioEncoder:self audioData:data];
+        }
     }
 }
-
-
 
 - (void)startRecorder
 {
@@ -328,27 +347,6 @@ static int initTime = 0;
     _pcmBuffer = NULL;
     _pcmBufferSize = 0;
     return originalBufferSize;
-}
-
-- (NSData*)adtsDataForPacketLength:(NSUInteger)packetLength {
-    int adtsLength = 7;
-    char *packet = malloc(sizeof(char) * adtsLength);
-    // Variables Recycled by addADTStoPacket
-    int profile = 2;  //AAC LC
-    //39=MediaCodecInfo.CodecProfileLevel.AACObjectELD;
-    int freqIdx = 3;  //44.1KHz
-    int chanCfg = 1;  //MPEG-4 Audio Channel Configuration. 1 Channel front-center
-    NSUInteger fullLength = adtsLength + packetLength;
-    // fill in ADTS data
-    packet[0] = (char)0xFF; // 11111111     = syncword
-    packet[1] = (char)0xF9; // 1111 1 00 1  = syncword MPEG-2 Layer CRC
-    packet[2] = (char)(((profile-1)<<6) + (freqIdx<<2) +(chanCfg>>2));
-    packet[3] = (char)(((chanCfg&3)<<6) + (fullLength>>11));
-    packet[4] = (char)((fullLength&0x7FF) >> 3);
-    packet[5] = (char)(((fullLength&7)<<5) + 0x1F);
-    packet[6] = (char)0xFC;
-    NSData *data = [NSData dataWithBytesNoCopy:packet length:adtsLength freeWhenDone:YES];
-    return data;
 }
     
 

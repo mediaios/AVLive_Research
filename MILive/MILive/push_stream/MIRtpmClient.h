@@ -15,22 +15,34 @@ NS_ASSUME_NONNULL_BEGIN
 {
     RTMP* rtmp;
     double start_time;
-    dispatch_queue_t workQueue;//异步Queue
 }
-
-@property (nonatomic,copy) NSString* rtmpUrl;//rtmp服务器流地址
 
 - (RTMP*)getCurrentRtmp;
 
-/**
- *  获取单例
- *
- *  @return 单例
- */
 + (instancetype)getInstance;
-
-
 - (BOOL)startRtmpConnect:(NSString *)urlString;
+
+
+/**
+ 发送视频sps，pps
+ */
+- (void)sendVideoSps:(NSData *)spsData pps:(NSData *)ppsData;
+
+/**
+ 发送视频帧数据
+ */
+- (void)sendVideoData:(NSData *)data isKeyFrame:(BOOL)isKeyFrame;
+
+/**
+ 发送音频头信息
+ */
+- (void)sendAudioHeader:(NSData *)data;
+
+/**
+ 发送音频数据
+ */
+- (void)sendAudioData:(NSData *)data;
+
 @end
 
 NS_ASSUME_NONNULL_END

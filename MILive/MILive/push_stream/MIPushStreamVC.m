@@ -8,36 +8,46 @@
 
 #import "MIPushStreamVC.h"
 #import <AVFoundation/AVFoundation.h>
-#import "MIHWH264Encoder.h"
+#import "PSHWH264Encoder.h"
 #import "MIRtpmClient.h"
 #import "MIAudioRecord.h"
 
+typedef enum MIAppLiveStatus{
+    MIAppLiveStatus_Ready = 0,
+    MIAppLiveStatus_Livie
+}MIAppLiveStatus;
 
-@interface MIPushStreamVC ()<AVCaptureVideoDataOutputSampleBufferDelegate,MIHWH264EncoderDelegate>
+@interface MIPushStreamVC ()<AVCaptureVideoDataOutputSampleBufferDelegate,PSHWH264EncoderDelegate,MIAudioEncoderDelegate>
 @property (weak, nonatomic) IBOutlet UIView *m_displayView;
+@property (weak, nonatomic) IBOutlet UIButton *liveBtn;
+
 @property (nonatomic,strong) AVCaptureVideoDataOutput *video_output;
 @property (nonatomic,strong) AVCaptureSession         *m_session;
 
 @property (nonatomic,strong) MIAudioRecord *audioRecord;
-@property (nonatomic,strong) MIHWH264Encoder *hwH264Encoder;
+@property (nonatomic,strong) PSHWH264Encoder *psH264Encoder;
+
+@property (nonatomic,assign) MIAppLiveStatus appStatus;
+
 @end
 
 @implementation MIPushStreamVC
 
-- (MIHWH264Encoder *)hwH264Encoder
+- (PSHWH264Encoder *)psH264Encoder
 {
-    if (!_hwH264Encoder) {
-        _hwH264Encoder = [MIHWH264Encoder getInstance];
-        _hwH264Encoder.delegate = self;
-        [_hwH264Encoder settingEncoderParametersWithWidth:1080 height:1920 fps:30];
+    if (!_psH264Encoder) {
+        _psH264Encoder = [PSHWH264Encoder getInstance];
+        _psH264Encoder.delegate = self;
+        [_psH264Encoder settingEncoderParametersWithWidth:480 height:640 fps:30];
     }
-    return _hwH264Encoder;
+    return _psH264Encoder;
 }
 
 - (MIAudioRecord *)audioRecord
 {
     if (!_audioRecord) {
         _audioRecord = [[MIAudioRecord alloc] init];
+        _audioRecord.delegate = self;
     }
     return _audioRecord;
 }
@@ -45,11 +55,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+
     
-    [[MIRtpmClient getInstance] startRtmpConnect:@"rtmp://148.70.8.134:1935/myapp/test1"];
-    [self.audioRecord startRecorder];
-    
-     [self startCaptureSession];
+    [self startCaptureSession];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -61,27 +69,28 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    [self.audioRecord stopRecorder];
     [self stopPreview];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-
+    
 }
 
 
 - (IBAction)onPressedBtnDismiss:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
-    
+
 - (int)startCaptureSession
 {
     NSError *error = nil;
     AVCaptureSession *session = [[AVCaptureSession alloc] init];
-    if([session canSetSessionPreset:AVCaptureSessionPreset1920x1080])
+    if([session canSetSessionPreset:AVCaptureSessionPreset640x480])
     {
-        session.sessionPreset = AVCaptureSessionPreset1920x1080;
+        session.sessionPreset = AVCaptureSessionPreset640x480;
     }
     else
     {
@@ -181,7 +190,26 @@
 {
     if ([_m_session isRunning]) {
         [_m_session stopRunning];
+    }
+}
+
+- (IBAction)onPressedBtnStartOrStopLive:(id)sender {
+    if (self.appStatus == MIAppLiveStatus_Ready ) {
+        NSString *localURL = @"rtmp://192.168.187.236:1935/rtmplive/room1";
+        if ([[MIRtpmClient getInstance] startRtmpConnect:localURL]) {
+            self.psH264Encoder.sps = nil;
+            self.psH264Encoder.pps = nil;
+            self.appStatus = MIAppLiveStatus_Livie;
+            [self.audioRecord startRecorder];
+            self.liveBtn.backgroundColor = [UIColor redColor];
+            [self.liveBtn setTitle:@"STOP" forState:UIControlStateNormal];
+        }
         
+    }else{
+        self.appStatus = MIAppLiveStatus_Ready;
+        self.liveBtn.backgroundColor = [UIColor greenColor];
+        [self.liveBtn setTitle:@"LIVE" forState:UIControlStateNormal];
+        [self.audioRecord stopRecorder];
     }
 }
 
@@ -190,24 +218,40 @@
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
     if (sampleBuffer) {
-        [self.hwH264Encoder encoder:sampleBuffer];
+        [self.psH264Encoder encoder:sampleBuffer];
     }
-    
 }
 
-- (void)captureOutput:(AVCaptureOutput *)output didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, 6_0)
+#pragma mark - PSHWH264EncoderDelegate
+- (void)videoEncoder:(PSHWH264Encoder *)encoder sps:(NSData *)sps  pps:(NSData *)pps
 {
-//        NSLog(@"%s",__func__);
-}
-
-#pragma mark MIHWH264EncoderDelegate
-- (void)acceptEncoderData:(uint8_t *)data length:(int)len naluType:(H264Data_NALU_TYPE)naluType
-{
-    if (data != NULL) {
-//        NSLog(@"%s---type:%d",__func__,(int)naluType);
+    if (self.appStatus == MIAppLiveStatus_Livie) {
+         [[MIRtpmClient getInstance] sendVideoSps:sps pps:pps];
     }
-    
 }
 
+- (void)videoEncoder:(PSHWH264Encoder *)encoder videoData:(NSData *)vData  isKeyFrame:(BOOL)isKey
+{
+    if (self.appStatus == MIAppLiveStatus_Livie) {
+        [[MIRtpmClient getInstance] sendVideoData:vData isKeyFrame:isKey];
+    }
+}
+
+#pragma mark - MIAudioEncoderDelegate
+- (void)audioEncoder:(MIAudioRecord *)encoder audioHeader:(NSData *)audioH
+{
+    if (self.appStatus == MIAppLiveStatus_Livie) {
+        [[MIRtpmClient getInstance] sendAudioHeader:audioH];
+    }
+}
+
+- (void)audioEncoder:(MIAudioRecord *)encoder audioData:(NSData *)audioData
+{
+    if (self.appStatus == MIAppLiveStatus_Livie) {
+        [[MIRtpmClient getInstance] sendAudioData:audioData];
+    }
+}
 
 @end
+
+

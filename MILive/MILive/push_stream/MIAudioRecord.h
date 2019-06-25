@@ -12,8 +12,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MIAudioRecord;
+
+@protocol MIAudioEncoderDelegate <NSObject>
+- (void)audioEncoder:(MIAudioRecord *)encoder audioHeader:(NSData *)audioH;
+- (void)audioEncoder:(MIAudioRecord *)encoder audioData:(NSData *)audioData;
+
+@end
+
+
 @interface MIAudioRecord : NSObject
 
+@property (nonatomic,weak) id<MIAudioEncoderDelegate> delegate;
 @property (nonatomic,assign) BOOL m_isRunning;
 - (void)stopRecorder;
 - (void)startRecorder;

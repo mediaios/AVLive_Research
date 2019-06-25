@@ -392,9 +392,43 @@
                                             <action selector="onPressedBtnDismiss:" destination="PlD-oT-aaK" eventType="touchUpInside" id="VZx-A3-bwW"/>
                                         </connections>
                                     </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uvg-7k-jTc">
+                                        <rect key="frame" x="0.0" y="698" width="414" height="120"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u5g-g6-tea">
+                                                <rect key="frame" x="152" y="5" width="110" height="110"/>
+                                                <color key="backgroundColor" red="0.13562683070000001" green="0.59636738580000004" blue="0.080022338580000005" alpha="0.84999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="110" id="Eeh-3B-ten"/>
+                                                    <constraint firstAttribute="width" constant="110" id="S7b-lL-fCz"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                                <state key="normal" title="LIVE">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="55"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="onPressedBtnStartOrStopLive:" destination="iLs-dp-XOb" eventType="touchUpInside" id="v8S-kH-S9o"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="u5g-g6-tea" firstAttribute="centerY" secondItem="uvg-7k-jTc" secondAttribute="centerY" id="Bp0-0i-I4e"/>
+                                            <constraint firstItem="u5g-g6-tea" firstAttribute="centerX" secondItem="uvg-7k-jTc" secondAttribute="centerX" id="Uqg-jl-pTY"/>
+                                            <constraint firstAttribute="height" constant="120" id="V28-wr-r1k"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstItem="uvg-7k-jTc" firstAttribute="leading" secondItem="SeL-Oh-ld2" secondAttribute="leading" id="5TK-HP-qWP"/>
+                                    <constraint firstAttribute="trailing" secondItem="uvg-7k-jTc" secondAttribute="trailing" id="6Bq-tV-N26"/>
+                                    <constraint firstAttribute="bottom" secondItem="uvg-7k-jTc" secondAttribute="bottom" id="QQh-MQ-iQj"/>
                                     <constraint firstItem="m6u-RG-85e" firstAttribute="leading" secondItem="SeL-Oh-ld2" secondAttribute="leading" constant="5" id="nyn-6v-hgh"/>
                                     <constraint firstItem="m6u-RG-85e" firstAttribute="top" secondItem="SeL-Oh-ld2" secondAttribute="top" constant="5" id="sxc-mF-rti"/>
                                 </constraints>
@@ -410,6 +444,7 @@
                         <viewLayoutGuide key="safeArea" id="HJJ-UF-VPx"/>
                     </view>
                     <connections>
+                        <outlet property="liveBtn" destination="u5g-g6-tea" id="q3g-69-pdx"/>
                         <outlet property="m_displayView" destination="SeL-Oh-ld2" id="cTC-E1-eCF"/>
                     </connections>
                 </viewController>
