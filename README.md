@@ -29,8 +29,8 @@ ios音视频直播及播放技术预研总结
 
 ### 音频编码 
 
-* 对音频的介绍以及音频格式介绍
-* 利用`AudioToolBox`把音频PCM转化为AAC
+* [对音频的介绍以及音频格式介绍](https://juejin.im/post/5ced12e6f265da1b5d578bb5)
+* [利用`AudioToolBox`把音频PCM转化为AAC](https://juejin.im/post/5ced1568f265da1b6f4355b9)
 * 利用FFMPEG把PCM转化成AAC
 
 ## 对音视频做MUX 
