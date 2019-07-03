@@ -41,8 +41,9 @@ ios音视频直播及播放技术预研总结
 
 ## 推流 
 
-* 在mac上搭建一个ngix，被用于做RTMP推流
-* 利用ffmpeg推流到rtmp服务 
+* [在mac和centos服务器上搭建一个ngix，被用于做RTMP推流](https://juejin.im/post/5d1c1f2c6fb9a07ecb0bc32f)
+* [直播简单实现——利用librtm推流](https://juejin.im/post/5d1c1f2c6fb9a07ecb0bc32f)
+* 利用ffmpeg推流到rtmp服务
 
 ## 阶段成果
 利用上面的知识点做一个推流SDK 
