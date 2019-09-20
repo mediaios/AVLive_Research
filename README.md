@@ -51,6 +51,11 @@ ios音视频直播及播放技术预研总结
 
 ## 音视频播放 
 
+### 视频播放 
+
+* [利用AVPlayer播放本地和网络视频](https://github.com/mediaios/AVLive_Research/tree/master/MIPlay/AVPlayerDemo_01)
+
+
 ### OPenGL2的学习 
   * 关于OPenGL
   * 关于定点着色器和片源着色器
